@@ -10,11 +10,18 @@ namespace General
         float CameraSize;
         public GameObject Target = null;
         Vector2 MovePoint;
+        public Texture2D cursor;
+
 
         private void Start()
         {
+            if (cursor != null)
+            {
+                Cursor.SetCursor(cursor, new Vector2(0, 0), CursorMode.Auto);
+            }
             C = gameObject.GetComponent<Camera>();
             if (C != null) { CameraSize = C.orthographicSize; } else { this.enabled = false; }
+
         }
 
         private void Update()
