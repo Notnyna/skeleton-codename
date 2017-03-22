@@ -2,53 +2,62 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace General
+{
     public class PlatformMovement : MonoBehaviour
     {
 
-    // Use this for initialization
-    public static bool buttonTouch;
-    private Vector3 posA, posB, nextPos;
+        public Transform Button;
+        public Transform MoveToTransform;
+        public float speed;
 
-    [SerializeField]
-    private float speed;
+        private Vector3 posA, posB, nextPos;
 
-    [SerializeField]
-    private Transform childTransform;
+        private bool doMove;
+        private bool checkbutton;
 
-    [SerializeField]
-    private Transform transformB;
-
-    void Start()
-    {
-        buttonTouch = false;
-        posA = childTransform.localPosition;
-        posB = transformB.localPosition;
-        nextPos = posB;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (buttonTouch)
+        void Start()
         {
-            move();
-        }
-    }
-    public void move()
-    {
-        childTransform.localPosition = Vector3.MoveTowards(childTransform.localPosition, nextPos, speed * Time.deltaTime);
-        if (Vector3.Distance(childTransform.localPosition, nextPos) <= 0.01)
-        {
-            changeDirection();
-        }
-    }
-
-    public void changeDirection()
-    {
-        if (nextPos != posA)
-            nextPos = posA;
-        else
+            if (Button.GetComponent<ButtonScript>() == null)
+            {
+                doMove = true;
+                checkbutton = false;
+            }
+            else { checkbutton = true; }
+            posA = transform.position;
+            posB = MoveToTransform.position;
             nextPos = posB;
-    }
-}
+        }
 
+        // Update is called once per frame
+        void Update()
+        {
+            if (doMove)
+            {
+                Move();
+            }
+            if (checkbutton)
+            {
+                doMove = Button.GetComponent<ButtonScript>().button;
+            }
+        }
+
+        public void Move()
+        {
+            transform.position = Vector3.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
+            if (Vector3.Distance(transform.localPosition, nextPos) <= 0.01)
+            {
+                changeDirection();
+            }
+        }
+
+        public void changeDirection()
+        {
+            if (nextPos != posA)
+                nextPos = posA;
+            else
+                nextPos = posB;
+        }
+    }
+
+}

@@ -2,36 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ButtonScript : MonoBehaviour {
+namespace General
+{
+    public class ButtonScript : MonoBehaviour
+    {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        public bool button;
 
-	}
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Box")
+        // Update is called once per frame
+        void Update()
         {
-            PlatformMovement.buttonTouch = true;
+
         }
-    }
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Box")
+        private void OnCollisionEnter2D(Collision2D collision)
         {
-            PlatformMovement.buttonTouch = true;
+            if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Movable")
+            {
+                button = true;
+            }
         }
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Box")
+        private void OnCollisionStay2D(Collision2D collision)
         {
-            PlatformMovement.buttonTouch = false;
+            if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Movable")
+            {
+                button = true;
+            }
+        }
+        private void OnCollisionExit2D(Collision2D collision)
+        {
+            if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Movable")
+            {
+                button = false;
+            }
         }
     }
 }
