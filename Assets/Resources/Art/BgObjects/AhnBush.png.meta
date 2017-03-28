@@ -1,19 +1,13 @@
 fileFormatVersion: 2
-guid: 8616900e1ee0ba7468848ff83a971746
-timeCreated: 1490214668
+guid: eea69004e96d4bf43993f997e87737d7
+timeCreated: 1490646220
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: golem_0
-    21300002: golem_1
-    21300004: golem_2
-    21300006: golem_3
-    21300008: golem_4
-    21300010: golem_5
-    21300012: golem_6
-    21300014: golem_7
-    21300016: golem_8
-    21300018: golem_9
+    21300000: AhnBush_0
+    21300002: AhnBush_1
+    21300004: AhnBush_2
+    21300006: AhnBush_3
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -88,130 +82,52 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: golem_0
+      name: AhnBush_0
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 0
-        width: 30
-        height: 27
+        width: 22
+        height: 18
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: golem_1
+      name: AhnBush_1
       rect:
         serializedVersion: 2
-        x: 33
+        x: 24
         y: 0
-        width: 30
-        height: 27
+        width: 22
+        height: 18
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: golem_2
+      name: AhnBush_2
       rect:
         serializedVersion: 2
-        x: 65
+        x: 47
         y: 0
-        width: 30
-        height: 27
+        width: 22
+        height: 18
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: golem_3
+      name: AhnBush_3
       rect:
         serializedVersion: 2
-        x: 97
+        x: 71
         y: 0
-        width: 30
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: golem_4
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 0
-        width: 30
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: golem_5
-      rect:
-        serializedVersion: 2
-        x: 158
-        y: 0
-        width: 30
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: golem_6
-      rect:
-        serializedVersion: 2
-        x: 188
-        y: 0
-        width: 30
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: golem_7
-      rect:
-        serializedVersion: 2
-        x: 218
-        y: 0
-        width: 30
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: golem_8
-      rect:
-        serializedVersion: 2
-        x: 250
-        y: 0
-        width: 30
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: golem_9
-      rect:
-        serializedVersion: 2
-        x: 290
-        y: 0
-        width: 30
-        height: 27
+        width: 22
+        height: 18
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

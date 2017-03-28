@@ -9,6 +9,7 @@ namespace General
         Camera C;
         float CameraSize;
         public GameObject Target = null;
+        public bool mousemove = false;
         Vector2 MovePoint;
 
         private void Start()
@@ -19,16 +20,19 @@ namespace General
 
         private void Update()
         {
-            MovePoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            MovePoint = MovePoint - new Vector2(transform.position.x, transform.position.y);
-
-            if (Target != null)
+            if (mousemove)
             {
-                MovePoint += new Vector2(Target.transform.position.x, Target.transform.position.y);
+                MovePoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                MovePoint = MovePoint - new Vector2(transform.position.x, transform.position.y);
                 C.orthographicSize = CameraSize + Vector2.Distance(Target.transform.position, transform.position) / 10f;
             }
 
-            transform.position = new Vector3(MovePoint.x, MovePoint.y, -100);
+            if (Target != null)
+            {
+                MovePoint = new Vector2(Target.transform.position.x, Target.transform.position.y);
+            }
+
+            transform.position = new Vector3(MovePoint.x, 0, -10);
         }
 
 

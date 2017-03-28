@@ -1,13 +1,19 @@
 fileFormatVersion: 2
-guid: a731afb6470185747a2af3b15d7e0ea6
-timeCreated: 1490626089
+guid: 9bd0ce881e0fa5a4eb82b2facf0f6a55
+timeCreated: 1490563107
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Main_0
-    21300002: Main_1
-    21300004: Main_2
-    21300006: Main_3
+    21300000: SandGolem_0
+    21300002: SandGolem_1
+    21300004: SandGolem_2
+    21300006: SandGolem_3
+    21300008: SandGolem_4
+    21300010: SandGolem_5
+    21300012: SandGolem_6
+    21300014: SandGolem_7
+    21300016: SandGolem_8
+    21300018: SandGolem_9
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -82,12 +88,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Main_0
+      name: SandGolem_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 1
         y: 0
-        width: 17
+        width: 24
         height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -95,12 +101,12 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Main_1
+      name: SandGolem_1
       rect:
         serializedVersion: 2
-        x: 16
+        x: 29
         y: 0
-        width: 19
+        width: 24
         height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -108,12 +114,12 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Main_2
+      name: SandGolem_2
       rect:
         serializedVersion: 2
-        x: 33
+        x: 58
         y: 0
-        width: 19
+        width: 24
         height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -121,12 +127,90 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Main_3
+      name: SandGolem_3
       rect:
         serializedVersion: 2
-        x: 51
+        x: 86
         y: 0
-        width: 21
+        width: 24
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: SandGolem_4
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 0
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: SandGolem_5
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 0
+        width: 39
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: SandGolem_6
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 0
+        width: 28
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: SandGolem_7
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 0
+        width: 30
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: SandGolem_8
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 0
+        width: 32
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: SandGolem_9
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 0
+        width: 29
         height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}

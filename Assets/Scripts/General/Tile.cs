@@ -21,13 +21,12 @@ namespace General
 
             if (multitile)
             {
-                string sname = sprite.name.Remove(sprite.name.Length - 2);
+                string sname = sprite.name.Split('_')[0];
                 Tiles = Resources.LoadAll<Sprite>("Art/Ground/" + sname);
-                //Debug.Log(P.Length);
+                //Debug.Log(sname);
                 PutMultiTiles();
             }
-            else {
-                PutSingleTiles(); }
+            else { PutSingleTiles(); }
 
             sprite.enabled = false;
         }
@@ -150,6 +149,9 @@ namespace General
             GameObject child;
             child = Instantiate(prefab) as GameObject;
             child.transform.position = pos;
+            SpriteRenderer childSR = child.GetComponent<SpriteRenderer>();
+            childSR.color = sprite.color;
+            childSR.sortingOrder = sprite.sortingOrder;
             child.transform.localScale = new Vector3(globalscale, globalscale);
             child.transform.parent = transform;
         }

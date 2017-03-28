@@ -15,13 +15,13 @@ namespace General
         public bool repeat = false; //Repeat current sequence?
 
         public float timescale = 1f; //To quickly hasten or slow animations
-        public bool Multisprite = false; // If sprite belongs to spritesheet, check true
-        public string PathFolder = "/"; // Folder name when going from resources/art (do not omit / / )
-        private int[] currentAni = null;
-        private SpriteRenderer SR = null;
-        private Sprite Def = null;
 
-        public bool inAni { private set; get; } //Animating currently?
+        public bool Multisprite = true; // If sprite belongs to spritesheet, check true
+        public string PathFolder = "/"; // Folder name when going from resources/art (do not omit / / )
+
+        private int[] currentAni = null;
+        public int AniIndex;
+        private SpriteRenderer SR = null;
 
         int S, F, C; //Start Finish Current
         float T; // Time on going for current sprite
@@ -37,7 +37,6 @@ namespace General
                 Debug.Log("Animations not found for: "+gameObject.name);
                 gameObject.GetComponent<ListAnimation>().enabled = false;
             }
-            Def = SR.sprite;
 
             if (AnimateAll) { PlayAll(); }
         }
@@ -50,37 +49,37 @@ namespace General
             //Debug.Log(path);
         }
 
-
         public void PlayFromTo(int s, int f)
         {
             if (!(s > 0 && f > 0 && Sprites.Length <= s && Sprites.Length <= f)) { return; }
-            if (s > f) { int temp = s; s = f; f = temp; } // To do - animate backwards
+            if (s > f) { int temp = s; s = f; f = temp; }
 
-            S = s; // To do - option whether to complete current animation first or skip
+            S = s; // To do option whether to complete current animation first or skip?
             F = f;
             T = STime[S] * timescale;
 
             changeSprite();
 
-            inAni = true;
         }
 
         public void PlayAnimation(int n, bool rep = false) {
-            if (Animations != null && n < Animations.Length)
+            if (Animations != null & n < Animations.Length)
             {
                 string ani = Animations[n];
-                currentAni = new int[ani.Length]; //Setting up before play
+                currentAni = new int[ani.Length]; // currently max sprites are 10
                 F = ani.Length;
                 S = 0;
-                C = 0;
                 repeat = rep;
                 for (int i = 0; i < ani.Length; i++)
                 {
                     currentAni[i]=int.Parse(ani.Substring(i, 1));
                 }
-                inAni = true; // Start up animation
+                if (AniIndex != n)
+                {
+                    C = 0; AniIndex = n;
+                } 
+                
             }
-
         }
 
         public float currentAniTime() {
@@ -88,7 +87,7 @@ namespace General
             float time = 0;
             for (int i = 0; i < currentAni.Length; i++)
             {
-                if (currentAni[i] >= STime.Length)
+                if (currentAni[i] > STime.Length)
                 {
                     time += timescale;
                 }
@@ -99,55 +98,51 @@ namespace General
             return time;
         }
 
+        public int currentSprite() { return C; }
+
         public void PlayAll()
         {
             C = 0;
             S = 0;
             F = Sprites.Length;
-            currentAni = null; // Temporary solution
+            currentAni = null;
             changeSprite();
-            inAni = true;
         }
 
         public void goIdle()
         {
-            //To expand - idle animation 
-            SR.sprite = Def;
-            inAni = false;
+            if (Animations == null)
+            {
+                PlayAll(); return;
+            }
+            PlayAnimation(0);
             //currentAni = null;
         }
 
         public void changeSprite()
         {
-            int to = C;
-            if (currentAni != null) { to = currentAni[C]; } // Gets the sprite from the sequence   
-            SR.sprite = Sprites[to]; //Otherwise it is C
-
-            if (to<STime.Length) // Array overflow prevention check
+            int to = C; //Sprite is C (only used if animations=null)
+            if (currentAni != null) { to = currentAni[C]; } // Gets the sprite from the sequence
+            SR.sprite = Sprites[to];
+            if (to<STime.Length) // Array overflow check and set time for animation to play
             {
                 T = STime[to] * timescale;
             } else { T = timescale; }
-            
+            C++;
             //Debug.LogFormat("Changed To {0}", Sprites[to].name);
-            C++; // Go to next
         }
-
 
         private void Update()
         {
-            if (inAni)
+            T = T - Time.deltaTime;
+            if (T < 0)
             {
-                T = T - Time.deltaTime;
-                if (T < 0)
+                if (C < F) { changeSprite(); }
+                else
                 {
-                    if (C < F) { changeSprite(); }
-                    else
-                    {
-                        if (!repeat) { goIdle(); }
-                        else { C = S; changeSprite(); }
-                    }
+                    if (!repeat) { goIdle(); }
+                    else { C = S; changeSprite(); }
                 }
-                //Debug.LogFormat("{0}", T);
             }
         }
 
