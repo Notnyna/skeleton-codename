@@ -7,7 +7,7 @@ namespace General
     public class Tile : MonoBehaviour
     {
         public float globalscale=10;
-        SpriteRenderer sprite;
+        SpriteRenderer SR;
         int sizex;
         int sizey;
         public bool multitile=false;
@@ -16,25 +16,25 @@ namespace General
 
         void Awake()
         {
-            sprite = GetComponent<SpriteRenderer>();
+            SR = GetComponent<SpriteRenderer>();
             CalculateTileCount();
 
             if (multitile)
             {
-                string sname = sprite.name.Split('_')[0];
+                string sname = SR.name.Split('_')[0];
                 Tiles = Resources.LoadAll<Sprite>("Art/Ground/" + sname);
                 //Debug.Log(sname);
                 PutMultiTiles();
             }
             else { PutSingleTiles(); }
 
-            sprite.enabled = false;
+            SR.enabled = false;
         }
 
         void PutMultiTiles() {
             GameObject P = new GameObject();
             SpriteRenderer Psprite = P.AddComponent<SpriteRenderer>();
-            Psprite.sortingOrder = sprite.sortingOrder;
+            Psprite.sortingOrder = SR.sortingOrder;
             // 0 - Surface, 1 - Edge, 2 - Core, 3 - Side
 
 
@@ -53,7 +53,6 @@ namespace General
                 CreateTile(P, ToTile(0, 0));
                 Psprite.flipX = false;
             }
-
 
             //Cores
             if (sizey > 1 && sizex > 1) {
@@ -120,50 +119,56 @@ namespace General
         void PutSingleTiles() {
             GameObject P = new GameObject();
             SpriteRenderer Psprite = P.AddComponent<SpriteRenderer>();
-            Psprite.sortingOrder = sprite.sortingOrder;
-            Psprite.sprite = sprite.sprite;
-
-            //Debug.Log(sizex+" : "+sizey);
-
+            Psprite.sortingOrder = SR.sortingOrder;
+            Psprite.sprite = SR.sprite;
 
             for (int i = 0; i < sizex; i++)
             {
                 for (int j = 0; j < sizey; j++)
                 {
-                    CreateTile(P,ToTile(i,j));
+                    CreateTile(P, ToTile(i, j));
                 }
             }
 
-
+            Destroy(P);
         }
 
         void CalculateTileCount()
         {
-            Vector3 square = sprite.bounds.size;
-            //Debug.Log(sprite.bounds.size.ToString());
-            sizex = (int)Mathf.Round(square.x / (square.z * globalscale));
-            sizey = (int)Mathf.Round(square.y / (square.z * globalscale));
+            Vector3 bounds = SR.bounds.size;
+            sizex = (int)Mathf.Round(bounds.x / (bounds.x*globalscale / transform.localScale.x));
+            sizey = (int)Mathf.Round(bounds.y / (bounds.y*globalscale / transform.localScale.y));
+            if (sizex < 0) { sizex = 1; }
+            if (sizey < 0) { sizey = 1; }
+            //Debug.Log(sizex+ " " + sizey + "   "+ SR.bounds.size.ToString() +"  Obj: " + gameObject.name);
         }
 
-        void CreateTile(GameObject prefab, Vector2 pos) {
+        void CreateTile(GameObject prefab, Vector2 pos)
+        {
             GameObject child;
             child = Instantiate(prefab) as GameObject;
+
             child.transform.position = pos;
-            SpriteRenderer childSR = child.GetComponent<SpriteRenderer>();
-            childSR.color = sprite.color;
-            childSR.sortingOrder = sprite.sortingOrder;
             child.transform.localScale = new Vector3(globalscale, globalscale);
             child.transform.parent = transform;
+
+            SpriteRenderer childSR = child.GetComponent<SpriteRenderer>();
+            childSR.color = SR.color;
+            childSR.sortingOrder = SR.sortingOrder;
         }
 
         Vector2 ToTile(int posx, int posy)
         {
-            Vector3 extentOffset = sprite.bounds.extents;
-            float square = sprite.bounds.size.z * globalscale; //A single tile size, must be a square
-            Vector3 parentOffset = transform.position;
+            Vector3 bounds = SR.bounds.size;
+            float spritex = bounds.x * globalscale / transform.localScale.x; //A single tile size, must be a square?
+            float spritey = bounds.y * globalscale / transform.localScale.y;
 
-            Vector2 P = new Vector2(square * posx - extentOffset.x + parentOffset.x + square/2,
-             -square * posy + extentOffset.y + parentOffset.y - square/2
+            Vector3 parentOffset = transform.position;
+            Vector3 extentOffset = SR.bounds.extents;
+
+            Vector2 P = new Vector2(
+                spritex * posx - extentOffset.x + parentOffset.x + spritex / 2,
+                -spritey * posy + extentOffset.y + parentOffset.y - spritey / 2
              );
 
             return P;

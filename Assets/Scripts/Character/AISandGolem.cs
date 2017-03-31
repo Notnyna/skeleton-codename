@@ -46,7 +46,7 @@ namespace Character
             {
                 if (collision.tag == "Player")
                 {
-                    if (collision.transform.position.x-transform.position.x < Target.position.x-transform.position.x)
+                    if (Mathf.Abs(collision.transform.position.x-transform.position.x) < Mathf.Abs(Target.position.x-transform.position.x))
                     {
                         Target = collision.transform;
                     }
@@ -103,6 +103,7 @@ namespace Character
 
         private void Punch() {
             H.DoAnimation(2);
+            //Debug.Log("punch!");
         }
 
         private void Update()

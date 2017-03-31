@@ -23,6 +23,8 @@ namespace General
         public int AniIndex;
         private SpriteRenderer SR = null;
 
+        public bool Animate;
+
         int S, F, C; //Start Finish Current
         float T; // Time on going for current sprite
 
@@ -63,22 +65,23 @@ namespace General
         }
 
         public void PlayAnimation(int n, bool rep = false) {
-            if (Animations != null & n < Animations.Length)
+            if ( n < Animations.Length & AniIndex != n)
             {
                 string ani = Animations[n];
                 currentAni = new int[ani.Length]; // currently max sprites are 10
                 F = ani.Length;
                 S = 0;
                 repeat = rep;
+
                 for (int i = 0; i < ani.Length; i++)
                 {
                     currentAni[i]=int.Parse(ani.Substring(i, 1));
                 }
-                if (AniIndex != n)
-                {
-                    C = 0; AniIndex = n;
-                } 
-                
+
+                C = 0; // Start animating from 0
+                AniIndex = n; // Current animation index
+                changeSprite();
+                //Debug.Log("Playing animation " + n + " in " + gameObject.name);
             }
         }
 
@@ -111,10 +114,7 @@ namespace General
 
         public void goIdle()
         {
-            if (Animations == null)
-            {
-                PlayAll(); return;
-            }
+            //repeat = false;
             PlayAnimation(0);
             //currentAni = null;
         }
@@ -124,10 +124,8 @@ namespace General
             int to = C; //Sprite is C (only used if animations=null)
             if (currentAni != null) { to = currentAni[C]; } // Gets the sprite from the sequence
             SR.sprite = Sprites[to];
-            if (to<STime.Length) // Array overflow check and set time for animation to play
-            {
-                T = STime[to] * timescale;
-            } else { T = timescale; }
+            if (to < STime.Length) { T = STime[to] * timescale; } //Set time for how long to animate
+            else { T = timescale; }
             C++;
             //Debug.LogFormat("Changed To {0}", Sprites[to].name);
         }

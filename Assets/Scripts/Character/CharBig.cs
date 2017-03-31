@@ -7,6 +7,7 @@ namespace Character
         CircleCollider2D punchbox;
         Humus H;
         public float punchforce =100f;
+        public float monsterpunchmult = 2f;
 
         private void Start()
         {
@@ -27,7 +28,7 @@ namespace Character
 
                     if (collision.gameObject.CompareTag("Monster"))
                     {
-                        cp.collider.GetComponent<Rigidbody2D>().AddForce(punch*4);
+                        cp.collider.GetComponent<Rigidbody2D>().AddForce(punch*monsterpunchmult);
                     }
                     else {
                         cp.collider.GetComponent<Rigidbody2D>().AddForce(punch);

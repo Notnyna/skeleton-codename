@@ -19,6 +19,8 @@ namespace Scenario
             if (fadeTexture==null) {
                 Texture2D R = new Texture2D(1, 1);
                 R.SetPixel(0, 0, Color.black);
+                R.Apply();
+                fadeTexture = R;
             }
 
             alpha += fadeDir * fadespeed * Time.deltaTime;
@@ -33,6 +35,10 @@ namespace Scenario
 
             GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), fadeTexture);
 
+            if (alpha>=1)
+            {
+                Destroy(this);
+            }
         }
     }
 }

@@ -9,6 +9,9 @@ namespace Character
         public float moveforce=10f;
         public float jumpforce = 10f;
         public string jumpkey = "w";
+        public string actionbutton = "f";
+
+        public bool action { private set; get; }
         private Humus H;
 
         private void Start()
@@ -24,6 +27,7 @@ namespace Character
         private void DoAction()
         {
             H.DoAnimation(2,false);
+            action = true;
             /*
             Vector2 MD = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             MD -= new Vector2(transform.position.x, transform.position.y);
@@ -45,16 +49,13 @@ namespace Character
             if (axis != 0)
             {
                 H.Move(moveforce * axis);
-                H.DoAnimation(1, true);
+                if (H.CurrentAnimation() < 2)
+                {
+                    H.DoAnimation(1, true);
+                }
             }
-            if (Input.GetKey(jumpkey))
-            {
-                H.Jump(jumpforce);
-            }
-            if (Input.GetKey("f"))
-            {
-                DoAction();
-            }
+            if (Input.GetKeyDown(jumpkey)) { H.Jump(jumpforce);} 
+            if (Input.GetKeyDown(actionbutton)) { DoAction(); } else { action = false; }
         }
 
     }

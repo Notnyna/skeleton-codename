@@ -20,6 +20,8 @@ namespace Character
         private SpriteRenderer SR;
         private General.ListAnimation LS;
 
+        public int jumps = 1;
+        private int cjumps;
         private bool onGround;
         private bool stopMove;
         public bool flip { get; private set; }
@@ -87,7 +89,11 @@ namespace Character
             if (stopMove) { return; }
             if (RB == null || SR == null) { return; }
 
-            RB.AddForce(new Vector2(force,0));
+            if (!onGround)
+            {
+                RB.AddForce(new Vector2(force/2, 0));
+            }
+            else { RB.AddForce(new Vector2(force, 0)); }
 
             if (force > 0 && flip) {
                 SR.flipX = false;
@@ -102,10 +108,12 @@ namespace Character
 
         public void Jump(float jf)
         {
+            if (cjumps>0 & cjumps<jumps) { onGround = true; }
             if (!onGround | stopMove) { return; }
             //RB.AddForce(new Vector2(0,jf));
             RB.velocity = new Vector2(RB.velocity.x, jf);
             onGround = false;
+            cjumps++;
         }
 
         public float DoAnimation(int ani, bool allowMove = true, bool repeat = false)
@@ -128,9 +136,8 @@ namespace Character
         {
             if (!collision.CompareTag("Detection"))
             {
-                if (!onGround) { onGround = true; suspendMove(0.1f); }
+                if (!onGround & !stopMove) { onGround = true; cjumps = 0; suspendMove(0.1f); }
             }
-             
         }
 
         private void Update()
@@ -143,6 +150,8 @@ namespace Character
                 }
                 else { stopMove = false; }
             }
+            //if (!onGround) { RB.gravityScale = 1.2f; } else { RB.gravityScale = 1; }
         }
+
     }
 }
