@@ -21,8 +21,8 @@ namespace Character
         private General.ListAnimation LS;
 
         public int jumps = 1;
-        private int cjumps;
-        private bool onGround;
+        public int cjumps;
+        public bool onGround;
         private bool stopMove;
         public bool flip { get; private set; }
 
@@ -108,7 +108,8 @@ namespace Character
 
         public void Jump(float jf)
         {
-            if (cjumps>0 & cjumps<jumps) { onGround = true; }
+            if (cjumps < 1 & !onGround) { onGround = true; cjumps++; }
+            if (cjumps < jumps & !onGround) { onGround = true; }
             if (!onGround | stopMove) { return; }
             //RB.AddForce(new Vector2(0,jf));
             RB.velocity = new Vector2(RB.velocity.x, jf);
@@ -140,6 +141,18 @@ namespace Character
             }
         }
 
+        private List<Transform> Triggers = new List<Transform>();
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (!CompareTag("Detection")) { Triggers.Add(collision.transform); }
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            if (!CompareTag("Detection")) { Triggers.Remove(collision.transform); }
+            if (Triggers.Count == 0)  { onGround = false; }
+        }
+
         private void Update()
         {
             if (stopMove)
@@ -150,7 +163,7 @@ namespace Character
                 }
                 else { stopMove = false; }
             }
-            //if (!onGround) { RB.gravityScale = 1.2f; } else { RB.gravityScale = 1; }
+            if (!onGround) { RB.gravityScale = 1.4f; } else { RB.gravityScale = 1; }
         }
 
     }

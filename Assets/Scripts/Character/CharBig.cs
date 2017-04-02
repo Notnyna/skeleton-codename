@@ -24,7 +24,11 @@ namespace Character
                     Vector2 punch;
                     if ( !H.flip ) { punch = new Vector2(punchforce, 0); }
                     else { punch = new Vector2(-punchforce, 0); }
-                    
+
+                    if (collision.gameObject.CompareTag("Ground"))
+                    {
+                        H.onGround = true;
+                    }
 
                     if (collision.gameObject.CompareTag("Monster"))
                     {

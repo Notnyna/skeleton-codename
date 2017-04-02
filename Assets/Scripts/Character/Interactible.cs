@@ -5,6 +5,9 @@ namespace Character
 {
     public class Interactible : MonoBehaviour
     {
+        public delegate void WhenActioned(Transform who);
+        public event WhenActioned OnInteract;
+
         public Transform DropPrefab;
         private List<Player> Targets;
         private bool drop;
@@ -20,7 +23,7 @@ namespace Character
 
         private void Start()
         {
-            if (DropPrefab!=null)  { drop = true; }
+            if (DropPrefab != null) { drop = true; }
 
             if (animate) { LS = GetComponent<General.ListAnimation>(); }
 
@@ -45,7 +48,7 @@ namespace Character
 
         public void GiveFruit()
         {
-            if (drop && cdrops<maxdrops)
+            if (cdrops < maxdrops)
             {
                 Transform drop = Instantiate(DropPrefab);
                 drop.position = transform.position;
@@ -67,19 +70,21 @@ namespace Character
         {
             foreach (Player p in Targets)
             {
-                if (p.action && counter <= 0)
+                if (counter <= 0 && p.action)
                 {
-                    GiveFruit();
-                    Animate();
+                    if (drop) { GiveFruit(); }
+                    if (animate) { Animate(); }
+                    if (OnInteract != null) { OnInteract(p.transform); }
                     counter = cooldown;
                 }
             }
-            if (counter>0)
+            if (counter > 0)
             {
                 counter -= Time.deltaTime;
             }
 
         }
-
     }
+
+
 }

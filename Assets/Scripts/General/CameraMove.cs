@@ -7,7 +7,7 @@ namespace General
     public class CameraMove : MonoBehaviour
     {
         Camera C;
-        float CameraSize;
+        //float CameraSize;
 
         public Transform Target;
         private Character.Player[] Players;
@@ -25,9 +25,9 @@ namespace General
         private void Start()
         {
             C = gameObject.GetComponent<Camera>();
-            if (C != null) { CameraSize = C.orthographicSize; } else { this.enabled = false; }
+            //if (C != null) { CameraSize = C.orthographicSize; } else { this.enabled = false; }
             Players = FindObjectsOfType<Character.Player>();
-            SwitchToPlayer(3);
+            SwitchToPlayer(0);
         }
 
         private void FocusCamera(bool focus)
@@ -61,12 +61,7 @@ namespace General
 
         private void Update()
         {
-            if (mousemove)
-            {
-                MovePoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                MovePoint = MovePoint - new Vector2(transform.position.x, transform.position.y);
-                C.orthographicSize = CameraSize + Vector2.Distance(Target.transform.position, transform.position) / 10f;
-            }
+
 
             if (Input.GetKeyDown(switchbutton))
             {
@@ -80,13 +75,20 @@ namespace General
                     FocusCamera(true);
                 }
 
-                MovePoint = new Vector2(Target.transform.position.x, 0); // Target.transform.position.y);
+                MovePoint = new Vector2(Target.transform.position.x, Target.transform.position.y); // Target.transform.position.y);
 
                 MovePoint.x = Mathf.Lerp(transform.position.x,MovePoint.x,cameraspeed);
+                MovePoint.y = Mathf.Lerp(transform.position.y, MovePoint.y, cameraspeed);
             }
 
+            if (mousemove)
+            {
+                Vector2 Mpoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                MovePoint += new Vector2(Mpoint.x - transform.position.x, Mpoint.y - transform.position.y);
+                //C.orthographicSize = CameraSize + Vector2.Distance(Target.transform.position, transform.position) / 10f;
+            }
 
-            transform.position = new Vector3(MovePoint.x, 0, -10);
+            transform.position = new Vector3(MovePoint.x, MovePoint.y, -10);
         }
 
 

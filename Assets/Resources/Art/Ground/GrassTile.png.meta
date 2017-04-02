@@ -1,13 +1,13 @@
 fileFormatVersion: 2
-guid: b950c25149075e14a95b8a922d19a2b8
-timeCreated: 1491145250
+guid: 82fc0f59736190e4bac16b381e62fb3d
+timeCreated: 1491141397
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: BrickTiles_0
-    21300002: BrickTiles_1
-    21300004: BrickTiles_2
-    21300006: BrickTiles_3
+    21300000: JungTile_0
+    21300002: JungTile_1
+    21300004: JungTile_2
+    21300006: JungTile_3
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -39,7 +39,7 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   spriteMode: 2
-  spriteExtrude: 0
+  spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
@@ -82,7 +82,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: BrickTiles_0
+      name: JungTile_0
       rect:
         serializedVersion: 2
         x: 0
@@ -95,7 +95,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: BrickTiles_1
+      name: JungTile_1
       rect:
         serializedVersion: 2
         x: 20
@@ -108,7 +108,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: BrickTiles_2
+      name: JungTile_2
       rect:
         serializedVersion: 2
         x: 0
@@ -121,7 +121,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: BrickTiles_3
+      name: JungTile_3
       rect:
         serializedVersion: 2
         x: 20

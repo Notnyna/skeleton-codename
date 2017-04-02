@@ -13,6 +13,7 @@ namespace General
         public bool multitile=false;
         public bool allowflippingY = true;
         Sprite[] Tiles;
+        public string path = "Art/Ground/";
 
         void Awake()
         {
@@ -21,9 +22,11 @@ namespace General
 
             if (multitile)
             {
-                string sname = SR.name.Split('_')[0];
-                Tiles = Resources.LoadAll<Sprite>("Art/Ground/" + sname);
-                //Debug.Log(sname);
+                Tiles = Resources.LoadAll<Sprite>(path);
+                if (Tiles.Length < 3)
+                {
+                    Debug.Log(path + "Returns less than 4 tiles!");
+                }
                 PutMultiTiles();
             }
             else { PutSingleTiles(); }
@@ -85,20 +88,21 @@ namespace General
             if (sizey>1 && sizex>1)
             {
                 //Edges (bottom)
-                if (allowflippingY) {  Psprite.flipY = true;   }
                 Psprite.sprite = Tiles[1];
+                if (allowflippingY) { Psprite.flipY = true; } else { Psprite.sprite = Tiles[2]; }
                 CreateTile(P, ToTile(sizex - 1, sizey-1));
                 Psprite.flipX = true; 
                 CreateTile(P, ToTile(0, sizey-1));
-                Psprite.flipX = false; 
+                Psprite.flipX = false;
 
                 // Bottom
                 Psprite.sprite = Tiles[0];
+                if (!allowflippingY) { Psprite.sprite = Tiles[2]; }
                 for (int i = 1; i < sizex - 1; i++)
                 {
                     CreateTile(P, ToTile(i, sizey-1));
                 }
-                if (allowflippingY) { Psprite.flipY = true; }
+
             }
 
             //Pillar
