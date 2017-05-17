@@ -7,13 +7,16 @@ namespace Menu
     public class MenuManager : MonoBehaviour
     {
         /// <summary>
-        /// 0 - Main menu / pause
-        /// 1 - Storymodemenu
-        /// 2 - Inventory
+        /// keys: I wonder if it is safe to store all settings in a static class?
+        /// forward - f (not managed here)
+        /// exit(pause) - escape
+        /// 0 - Main menu (exit - pause)
+        /// 1 - Storymodemenu (exit - pause)
+        /// 2 - Inventory (exit - exit)
         /// 3 - Status (always enabled) so should not be counted in?!
         /// Personally the best bet would be to have all UI/menus inherit abstract which has changeTargets
         /// </summary>
-        private List<Transform> Menus;
+        public List<Transform> Menus = new List<Transform>();
         private int currmenu=0;
         public bool disableControl;
         public string openinv = "i";
@@ -21,38 +24,48 @@ namespace Menu
         private void Start()
         {
             DontDestroyOnLoad(this.gameObject);
-
-            Menus = new List<Transform>();
+            /*Menus = new List<Transform>();
             foreach (Transform it in transform)  {
-                if (it.CompareTag("Menu")) { Menus.Add(it); it.gameObject.SetActive(false); }
+                if (it.CompareTag("Menu")) {
+                    Menus.Add(it);
+                    it.gameObject.SetActive(false);
+                }
             }
-
+            */
             NoMenu();
         }
 
-        public void NoMenu() {
+        public void NoMenu() { //Might have to redo, this not only looks bad, it works bad
             if (disableControl) { return; }
-            Menus[currmenu].gameObject.SetActive(false);
+            //if (Menus == null) { Debug.Log("No menus? why"); return; }
+            if (Menus[currmenu] == null) {
+                foreach (Transform m in Menus) {
+                    if (m != null) { m.gameObject.SetActive(false); } //Maybe just do it in the first place
+                }
+                return;
+            }
+            //Menus[currmenu].gameObject.SetActive(false);
             currmenu = 0;
         }
 
         public void ChangeMenu(int m) {
             if (disableControl) { return; }
-            if (m>Menus.Count)
-            {
-                Debug.Log("Trying to open non existant menu! " + m);
-                return;
-            }
+            //if (m>Menus.Count){ Debug.Log("Trying to open non existant menu! " + m);  return;  }
+            if (Menus[m] == null) { return; }
             if (Menus[m].gameObject.activeSelf) { Menus[m].gameObject.SetActive(false); }
             else { Menus[m].gameObject.SetActive(true); }
             currmenu = m;
         }
 
+        private void FixedUpdate()
+        {
+            transform.position = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.y);
+        }
+
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Escape)) { NoMenu(); }
-            if (Input.GetKeyDown(openinv)) { ChangeMenu(0); }
-            
+            if (Input.GetKeyDown(openinv)) { ChangeMenu(2); }
         }
 
     }

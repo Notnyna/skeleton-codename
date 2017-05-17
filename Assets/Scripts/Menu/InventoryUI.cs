@@ -145,10 +145,10 @@ namespace Menu
             Slots[l].PutItem(t);
         }
 
-        private void Update()
-        {
-            transform.position = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.y); //Why is it smooth?
-        }
+        //private void Update()
+        //{
+           // transform.position = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.y); //Why is it smooth?
+        //}
 
     }
 }

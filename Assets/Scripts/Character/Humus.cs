@@ -44,7 +44,7 @@ namespace Character
         }
 
         public bool Move(float force) {
-            if (stopMove) { RB.velocity = new Vector2(0,RB.velocity.y); return false; }
+            if (stopMove) { return false; } //RB.velocity = new Vector2(0,RB.velocity.y); 
             if (RB == null) { return false; }
             if (!onGround)
             {

@@ -6,15 +6,19 @@ namespace Character
 {
     public class Player : MonoBehaviour
     {
+        public delegate void DoingAction(Transform who);
+        public event DoingAction OnAction;
+
         public float moveforce = 10f;
         public float jumpforce = 10f;
         public string jumpkey = "w";
         public string actionbutton = "f";
+        public string runbutton = "s";
         public string dropkey = "g";
 
         private bool running;
 
-        public bool action { private set; get; }
+        //public bool action { private set; get; }
         private Humus H;
 
         private void Start()
@@ -28,8 +32,9 @@ namespace Character
 
         private void DoAction()
         {
-            H.DoAnimation(3,false,true,0.3f);
-            action = true;
+            if (OnAction != null) { OnAction(transform); }
+            //H.DoAnimation(3,false,true,0.3f);
+            //action = true;
             /*
             Vector2 MD = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             MD -= new Vector2(transform.position.x, transform.position.y);
@@ -50,7 +55,7 @@ namespace Character
             float axis = Input.GetAxis("Horizontal");
             if (axis != 0)
             {
-                if (Input.GetKeyDown("s"))  { running = true; }
+                if (Input.GetKeyDown(runbutton))  { running = true; }
                 {
                     if (running)
                     {
@@ -63,8 +68,9 @@ namespace Character
             }
             else running = false;
             if (Input.GetKeyDown(jumpkey)) { H.Jump(jumpforce);} 
-            if (Input.GetKeyDown(actionbutton)) { DoAction(); } else { action = false; }
+            if (Input.GetKeyDown(actionbutton)) { DoAction(); }
             if (Input.GetKeyDown(dropkey)) { H.ReturnItem(); }
+            //if (Input.GetKeyDown(aimbutton)) { H.DoAnimation(3, false, true, 0.4f); }
             if (Input.GetKeyDown("q")) { H.HoldNextItem(true); }
             if (Input.GetKeyDown("e")) { H.HoldNextItem(); }
         }

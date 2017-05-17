@@ -2,12 +2,19 @@
 
 namespace General
 {
+    /// <summary>
+    /// Interacts only with Health? maybe some other.
+    /// After dealing damage, it is destroyed. Not gameobject.
+    /// 
+    /// How to handle when hitting multiple colliders belonging to the same health?
+    /// </summary>
     public class Damage : MonoBehaviour
     {
-        public float Apierce = 0;
+        public float Apierce = -1; //-1 means infinite
         public int Dmg = 1;
         public float primeTime=1f;
 
+        private Character.Health CH; //current health
         private bool destroy;
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -17,12 +24,15 @@ namespace General
             if (cg.CompareTag("Monster") | cg.CompareTag("Player"))
             {
                 Character.Health h = cg.GetComponent<Character.Health>();
+                if (CH == null) { CH = h; }
+                if (CH == h) { return; } //Maybe deal damage per frame ? Must save all targets though
                 if (h != null) { h.DealDamage(Dmg); }
-                Apierce--;
-                if (Apierce < 0 )
+                if (Apierce < 0) { return; }
+                if (Apierce == 0 )
                 {
                     Evaporate();
                 }
+                Apierce--;
             }
         }
 
@@ -44,7 +54,7 @@ namespace General
             {
                 primeTime -= Time.deltaTime;
             }
-            else if (destroy) { Destroy(gameObject); }
+            else if (destroy) { Destroy(this); }
         }
 
     }
