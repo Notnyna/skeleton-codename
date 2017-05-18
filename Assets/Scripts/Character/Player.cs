@@ -8,6 +8,8 @@ namespace Character
     {
         public delegate void DoingAction(Transform who);
         public event DoingAction OnAction;
+        public delegate void ActivateItem(Vector2 Point);
+        public event ActivateItem OnActivate;
 
         public float moveforce = 10f;
         public float jumpforce = 10f;
@@ -20,20 +22,28 @@ namespace Character
 
         //public bool action { private set; get; }
         private Humus H;
+        private Menu.MenuManager MM; //For calling inventory when picking up items
 
-        private void Start()
+        private void Awake()
         {
             H = GetComponent<Humus>();
-            if (H==null)
-            {
-                Debug.Log("No Humus in "+gameObject.name);
-            }
+            if (H == null) { Debug.Log("No Humus in " + gameObject.name); }
+            MM = FindObjectOfType<Menu.MenuManager>();
+            if (MM == null) { Debug.Log("Cant find menu manager :("); }
+            Inventory Inv = H.GetComponentInChildren<Inventory>();
+            if (Inv != null) { Inv.OnChange += CallInventory; } else { Debug.Log("No inv :("); }
+
+        }
+
+        private void CallInventory(Transform item, int index, bool removed)
+        {
+            MM.ChangeMenu(2,true);
         }
 
         private void DoAction()
         {
             if (OnAction != null) { OnAction(transform); }
-            //H.DoAnimation(3,false,true,0.3f);
+            H.DoAnimation(3,false,true,0.3f);
             //action = true;
             /*
             Vector2 MD = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -48,6 +58,16 @@ namespace Character
             }
             //rb.velocity = new Vector2(MD.normalized.x*speed, rb.velocity.y);
             */
+        }
+
+        private void DoButtonAction()
+        {
+            if (OnActivate != null) { OnActivate(Camera.main.ScreenToWorldPoint(Input.mousePosition)); }
+            if (H.HeldItem !=null) {
+                Item.Gun G = H.HeldItem.GetComponent<Item.Gun>();
+                if (G != null) { G.Fire(0); }
+
+            } // I dont like this, I want it the other way around!
         }
 
         private void Update()
@@ -73,6 +93,7 @@ namespace Character
             //if (Input.GetKeyDown(aimbutton)) { H.DoAnimation(3, false, true, 0.4f); }
             if (Input.GetKeyDown("q")) { H.HoldNextItem(true); }
             if (Input.GetKeyDown("e")) { H.HoldNextItem(); }
+            if (Input.GetMouseButton(0)) { DoButtonAction(); }
         }
 
     }

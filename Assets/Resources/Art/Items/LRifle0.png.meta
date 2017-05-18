@@ -1,9 +1,13 @@
 fileFormatVersion: 2
 guid: f1e969a709dfcc4419ed0c493ddc1e77
-timeCreated: 1494829321
+timeCreated: 1495053311
 licenseType: Free
 TextureImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    21300000: LRifle0_0
+    21300002: LRifle0_1
+    21300004: LRifle0_2
+    21300006: LRifle0_3
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -76,7 +80,59 @@ TextureImporter:
     overridden: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: LRifle0_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 25
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: LRifle0_1
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 0
+        width: 25
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: LRifle0_2
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 0
+        width: 25
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: LRifle0_3
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 0
+        width: 25
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
     outline: []
   spritePackingTag: 
   userData: 

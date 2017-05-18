@@ -1,9 +1,13 @@
 fileFormatVersion: 2
 guid: c66099c48f6ffdb45a8f3d025d69cdba
-timeCreated: 1494941113
+timeCreated: 1495051422
 licenseType: Free
 TextureImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    21300000: Pilot3_0
+    21300002: Pilot3_1
+    21300004: Pilot3_2
+    21300006: Pilot3_3
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -76,7 +80,59 @@ TextureImporter:
     overridden: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Pilot3_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 4
+        width: 17
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Pilot3_1
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 4
+        width: 21
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Pilot3_2
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 4
+        width: 29
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Pilot3_3
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 4
+        width: 21
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
     outline: []
   spritePackingTag: 
   userData: 

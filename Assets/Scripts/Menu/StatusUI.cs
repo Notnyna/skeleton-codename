@@ -18,7 +18,7 @@ namespace Menu
             CameraT = Camera.main.GetComponent<Scenario.CameraControl>();
             CameraT.TargetSwitched += CameraT_TargetSwitched;
             HPBar = Instantiate(HPBar,transform);
-            //OnEnable();
+            OnEnable();
         }
 
         private void OnEnable()

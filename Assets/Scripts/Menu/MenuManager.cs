@@ -4,18 +4,19 @@ using UnityEngine;
 
 namespace Menu
 {
+    /// <summary>
+    /// keys: I wonder if it is safe to store all settings in a static class?
+    /// forward - f (not managed here)
+    /// exit(pause) - escape
+    /// 0 - Main menu (exit - pause)
+    /// 1 - Storymodemenu (exit - pause)
+    /// 2 - Inventory (exit - exit)
+    /// 3 - Status (always enabled) so should not be counted in?!
+    /// Personally the best bet would be to have all UI/menus inherit abstract which has changeTargets
+    /// TODO: Cannot access inventory when in storymode and main menu
+    /// </summary>
     public class MenuManager : MonoBehaviour
     {
-        /// <summary>
-        /// keys: I wonder if it is safe to store all settings in a static class?
-        /// forward - f (not managed here)
-        /// exit(pause) - escape
-        /// 0 - Main menu (exit - pause)
-        /// 1 - Storymodemenu (exit - pause)
-        /// 2 - Inventory (exit - exit)
-        /// 3 - Status (always enabled) so should not be counted in?!
-        /// Personally the best bet would be to have all UI/menus inherit abstract which has changeTargets
-        /// </summary>
         public List<Transform> Menus = new List<Transform>();
         private int currmenu=0;
         public bool disableControl;
@@ -47,12 +48,17 @@ namespace Menu
             //Menus[currmenu].gameObject.SetActive(false);
             currmenu = 0;
         }
-
-        public void ChangeMenu(int m) {
+        /// <summary>
+        /// 0 - Main menu (exit - pause)
+        /// 1 - Storymodemenu (exit - pause)
+        /// 2 - Inventory (exit - exit)
+        /// </summary>
+        /// <param name="m"></param>
+        public void ChangeMenu(int m, bool dontdisable=false) {
             if (disableControl) { return; }
             //if (m>Menus.Count){ Debug.Log("Trying to open non existant menu! " + m);  return;  }
             if (Menus[m] == null) { return; }
-            if (Menus[m].gameObject.activeSelf) { Menus[m].gameObject.SetActive(false); }
+            if (Menus[m].gameObject.activeSelf & !dontdisable) { Menus[m].gameObject.SetActive(false); }
             else { Menus[m].gameObject.SetActive(true); }
             currmenu = m;
         }

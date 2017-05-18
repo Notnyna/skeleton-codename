@@ -36,7 +36,7 @@ namespace General
         int S, F, C; //Start Finish Current
         float T; // Time on going for current sprite
 
-        private void Start()
+        private void Awake()
         {
             SR = gameObject.GetComponent<SpriteRenderer>();
             if (Multisprite) { FillSpritesList(); }
@@ -109,6 +109,7 @@ namespace General
                     time += STime[currentAni[i]] * timescale;
                 }
             }
+            //Debug.Log("AniTime for " +gameObject.name + " : " + time);
             return time;
         }
 

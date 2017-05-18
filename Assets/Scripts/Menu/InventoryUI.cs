@@ -45,29 +45,31 @@ namespace Menu
                 created = true;
 
                 Target.GetComponentInChildren<Character.Inventory>().OnChange += InventoryUI_OnChange; //Might be bad
-                MakeSelected();
+                MakeSelected(H.HoldIndex());
             }
             //Debug.Log("Created succesful?");
         }
 
-        private void InventoryUI_OnChange(Transform item, bool removed)
+        private void InventoryUI_OnChange(Transform item,int index, bool removed)
         {
-            if (item == null) { MakeSelected(); return; }
+            if (item == null) { MakeSelected(index); return; }
             //AddInventory(Target.GetComponent<Character.Humus>().GetInventory());
             if (removed)
             {
                 RemoveItem(item);
             }
-            else { AddItem(item); }
+            else { AddItem(item,index); }
             
         }
 
         private void AddInventory(Transform[] I)
         {
-            foreach (Transform i in I)
+            if (I == null) { return; }
+            for (int i = 0; i < I.Length; i++)
             {
-                AddItem(i);
+                AddItem(I[i],i);
             }
+
         }
 
         private void CreateSlots(int slotAmount)
@@ -91,28 +93,21 @@ namespace Menu
             }
         }
 
-        public bool AddItem(Transform item)
+        public bool AddItem(Transform item, int spot)
         {
+            if (item == null) { return false; }
             //Check if it is not already added, should not occur in any case.
             for (int i = 0; i < Slots.Length; i++)
             {
-                if (Slots[i].GetHeldItem() == item)
+                if  (Slots[i].GetHeldItem() == item)
                 {
                     Debug.Log("Trying to add an existing item!" + item.name);
                     return false;
                 }
             }
-
-            //Add item to first empty spot
-            for (int i = 0; i < Slots.Length; i++)
-            {
-                if (Slots[i].GetHeldItem() == null)
-                {
-                    Slots[i].PutItem(item);
-                    return true;
-                }
-            }
-            return false;
+            //Add item to precisely that spot it is in Inv
+            Slots[spot].PutItem(item);
+            return true;
         }
 
         public bool RemoveItem(Transform item)
@@ -128,13 +123,17 @@ namespace Menu
             return false;
         }
 
-        private void MakeSelected()
+        private void MakeSelected(int hi) // Universal, but might be better to look at index of humus inv
         {
-            int hi = CameraT.Target.GetComponent<Character.Humus>().heldItem;
+            if (!created) { return; }
+            /*int hi = Target.GetComponent<Character.Humus>().HoldIndex();
+            if (hi == -1) { Debug.Log("No inventory! should not call"); }*/
+
             foreach (Item.ItemSlot slot in Slots)
             {
                 slot.Select(true);
             }
+
             Slots[hi].Select();
         }
 

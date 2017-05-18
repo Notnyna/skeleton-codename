@@ -12,7 +12,7 @@ namespace Interact
         Menu.StoryModeUI SM;
         public string[] Dialog; // Format for dialogue example: p01"lit by dead,"z1.0p02" dying stars?"
 
-        private void Start()
+        private void Awake()
         {
             Interactible I = GetComponent<Interactible>();
             if (I == null) { Debug.Log("Nothing to interact with! Can be ignored"); }

@@ -16,6 +16,7 @@ namespace Interact
 
         private List<Character.Player> Targets;
 
+        public float range = 1f; 
         public float cooldown = 1f;
         private float counter;
 
@@ -24,12 +25,14 @@ namespace Interact
         public int playanimation;
         public int increaseani=0;
 
-        private void Start()
+        private void Awake()
         {
             if (animate) { LS = GetComponent<General.ListAnimation>(); if (LS == null) { animate = false; } }
-            Targets = new List<Character.Player>();
+            Targets = new List<Character.Player>(FindObjectsOfType<Character.Player>());
+            //Debug.Log("Players found: " + Targets.Count);
         }
 
+        /*
         private void OnTriggerEnter2D(Collider2D collision)
         {
             Character.Player pH = collision.GetComponent<Character.Player>();
@@ -37,12 +40,6 @@ namespace Interact
             {
                 if (!Targets.Contains(pH)) { Targets.Add(pH); pH.OnAction += BecomeInteracted; }
             }
-        }
-
-        public void BecomeInteracted(Transform who)
-        {
-            if (counter > 0) { return; } 
-            if (OnInteract != null) { OnInteract(who); }
         }
 
         private void OnTriggerExit2D(Collider2D collision)
@@ -54,10 +51,33 @@ namespace Interact
                 pH.OnAction -= BecomeInteracted;
             }
         }
+        */
+
+        public void BecomeInteracted(Transform who)
+        {
+            if (counter > 0) { return; }
+            //Debug.Log("Interacting!");
+            if (OnInteract != null) { OnInteract(who); }
+            counter = cooldown;
+        }
 
         private void OnDisable()
         {
-            Targets.Clear();
+            //Targets.Clear();
+            //foreach (Character.Player p in Targets)
+            //{
+            //    p.OnAction -= PlayerInteract;
+            //}
+        }
+
+        private void OnEnable()
+        {
+            if (transform.parent != null) { return; }
+            //Targets.Clear();
+            foreach (Character.Player p in Targets)
+            {
+                p.OnAction += PlayerInteract;
+            }
         }
 
         public void Animate()
@@ -66,6 +86,11 @@ namespace Interact
             {
                 LS.PlayAnimation(playanimation+increaseani, true);
             }
+        }
+
+        public void PlayerInteract(Transform who)
+        {
+            if (Vector2.Distance(who.transform.position, transform.position) < range) { BecomeInteracted(who); };
         }
 
         private void Update()

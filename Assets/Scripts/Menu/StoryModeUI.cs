@@ -62,6 +62,7 @@ namespace Menu
             if (enable) { GM.EnableControls(); } else { GM.DisableControls(); }
         }
 
+        /*
         private Sprite GetPortrait(string name)
         {
             for (int i = 0; i < Portraits.Length; i++)
@@ -70,7 +71,7 @@ namespace Menu
                 { return Portraits[i]; }
             }
             return null;
-        }
+        }*/
 
         private void CloseDialog()
         {
@@ -90,7 +91,7 @@ namespace Menu
         {
             T = t;
             write = true;
-            Debug.Log("Writing: " +t);
+            //Debug.Log("Writing: " +t);
         }
 
         private void WriteGo()
@@ -106,21 +107,24 @@ namespace Menu
             counter = letterspeed;
         }
 
-        private void DoNext()
+        private void DoNext() 
         {
-            if (Di >= D.Length) { Debug.Log("TimeToClose"); CloseDialog(); return; }
-            if (D[Di].Length == 0) {
+            if (Di >= D.Length) {
+                //Debug.Log("TimeToClose");
+                CloseDialog();
+                return; }
+            if (D[Di].Length == 0) { // For some reason both are called twice when appropriate, why?
                 //Continue with next line
                 Di++;
                 waitfornext = true;
-                Debug.Log("Next Line!");
+                //Debug.Log("Next Line!");
                 return;
             }
             string cline = D[Di];
-            Debug.Log("DoNext: " + cline);
+            //Debug.Log("DoNext: " + cline);
 
             if (cline.StartsWith("\"")) {
-                Debug.Log("1");
+                //Debug.Log("1");
                 cline = cline.Remove(0,1);;
                 int last = cline.IndexOf("\"");
                 WriteText(cline.Substring(0,last));
@@ -130,7 +134,7 @@ namespace Menu
             }
             if (cline.StartsWith("p")) { //Current max portraits - 99
                 cline = cline.Remove(0,1);
-                Debug.Log(cline.Substring(0, 2));
+                //Debug.Log(cline.Substring(0, 2));
                 int pi = int.Parse(cline.Substring(0,2));
                 ChangePortrait(pi);
                 cline = cline.Remove(0,2);
@@ -138,7 +142,7 @@ namespace Menu
                 return;
             }
             if (cline.StartsWith("z")) { //Pause, max sleep time - 9.9
-                Debug.Log("3");
+                //Debug.Log("3");
                 cline = cline.Remove(0,1);;
                 float z = float.Parse(cline.Substring(0, 3));
                 PauseDialogue(z);
@@ -150,25 +154,29 @@ namespace Menu
 
         private void PauseDialogue(float z)
         {
-            Debug.Log("Pausing for "+ z);
+            //Debug.Log("Pausing for "+ z);
             counter = z;
         }
 
         private void ChangePortrait(int p)
         {
-            Debug.Log("Changing portrait to " + p);
+            //Debug.Log("Changing portrait to " + p);
             P.GetComponent<SpriteRenderer>().sprite = Portraits[p];
             //counter = letterspeed;
         }
 
         public void ActionNext()
         {
-            counter = 0;
             if (waitfornext)
             {
                 waitfornext = false;
                 Clear();
             }
+        }
+
+        public void Skip()
+        {
+            counter = 0;
         }
 
         public void Clear()
@@ -178,7 +186,8 @@ namespace Menu
 
         private void Update()
         {
-            if (Input.GetKey("f")) { ActionNext(); }
+            if (Input.GetKeyDown("f")) { ActionNext(); }
+            if (Input.GetKey(KeyCode.Escape)) { Skip(); }
 
             if (counter > 0) { counter -= Time.deltaTime; }
             else {

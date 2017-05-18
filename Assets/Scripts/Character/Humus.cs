@@ -19,27 +19,31 @@ namespace Character
         private Rigidbody2D RB;
         private SpriteRenderer SR;
         private General.ListAnimation LS;
+        private Inventory Inv;
 
-        public int heldItem { get; private set; } 
         public Transform HeldItem;
+        public Vector2 ItemholdLocation;
+        //private FixedJoint2D HIJoint;
+
         public int jumps = 1;
         private int cjumps;
         private bool onGround;
         private bool stopMove;
-        private bool flip=true;
+        private bool flip=false; //Scale is >0 if false, 0< if true
         private bool dieflag;
-        public Vector2 ItemholdLocation;
+
 
         private float counter;
 
-        private void Start()
+        private void Awake()
         {
             //bodyparts = new List<Transform>();
             //inventory = new List<Transform>();
             RB = GetComponent<Rigidbody2D>();
             SR = GetComponent<SpriteRenderer>();
             LS = GetComponent<General.ListAnimation>();
-            heldItem = 0;
+            Inv = GetComponentInChildren<Inventory>();
+            //HIJoint = new FixedJoint2D();
             //UpdateParts();
         }
 
@@ -62,14 +66,18 @@ namespace Character
                 //RB.velocity = new Vector2(force, 0);
             }
             
-            if (force > 0 && flip) {
-                if (SR == null) { transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, 1); }
-                else SR.flipX = true;
+            if (force < 0 & flip) {
+                //if (SR == null) {
+                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, 1);
+                //}
+                //else SR.flipX = true;
                 flip = false;
             }
-            if (force < 0 && !flip) {
-                if (SR == null) { transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, 1); }
-                else  SR.flipX = false;
+            if (force > 0 & !flip) {
+                //if (SR == null) {
+                    transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, 1);
+                //}
+                //else  SR.flipX = false;
                 flip = true;
             }
             return true;
@@ -177,65 +185,72 @@ namespace Character
         #region Item/Inventory
         public Transform[] GetInventory()
         {
-            Inventory Inv = GetComponentInChildren<Inventory>();
             if (Inv == null) { return null; }
             return Inv.GetInventory();
         }
 
         public bool TakeItem(Transform item)
         {
-            Inventory Inv = GetComponentInChildren<Inventory>();
             if (Inv == null) { return false; }
-            Inv.TakeItem(item);
-            return false;
+            if (!Inv.TakeItem(item)) { return false; }
+            item.localPosition = ItemholdLocation;
+            Vector3 iscale = item.transform.localScale;
+            item.transform.localScale = new Vector3(Mathf.Abs(iscale.x),iscale.y,1);
+            //Debug.Log(iscale.ToString());
+            //if ((flip & iscale.x > 0) | (!flip & iscale.x < 0)) { iscale = new Vector3(-iscale.x, iscale.y, 1); Debug.Log("flipping item"); } 
+            HoldItem(Inv.currentselect);
+            return true;
         }
 
         public bool ReturnItem(Transform item)
         {
-            Inventory Inv = GetComponentInChildren<Inventory>();
             if (Inv == null) { return false; }
+            if (item == HeldItem) { HeldItem = null; }
             return Inv.ReturnItem(item);
         }
 
         public Transform ReturnItem(int i=-1)
         {
-            Inventory Inv = GetComponentInChildren<Inventory>();
             if (Inv == null) { return null; }
-            return Inv.ReturnItem(i);
+            if (i < 0) { HeldItem = null; }
+            Transform h = Inv.ReturnItem(i);
+            //if (h == HeldItem) { HeldItem = null; }
+            return h;
         }
 
         public int GetInventorySpace()
         {
-            Inventory Inv = GetComponentInChildren<Inventory>();
             if (Inv == null) { return 0; }
             return Inv.maxitems;
         }
 
         public void HoldNextItem(bool back=false)
         {
-            Inventory Inv = GetComponentInChildren<Inventory>();
             if (Inv == null) { return; }
-            if (!back) { if (heldItem == Inv.maxitems-1) { heldItem = -1; } HoldItem(heldItem + 1); } //next item
-            else { if (heldItem == 0) { heldItem = Inv.maxitems; } HoldItem(heldItem - 1); } // previous item
-            /*
-            for (int i = 0; i < I.Length; i++)
-            {
-                if (I[i] == HeldItem) {
-                    if (!back) { if (i == I.Length) { i = -1; } HoldItem(i + 1); } //next item
-                    else { if (i == 0) { i = I.Length+1; } HoldItem(i-1); } // previous item
-                    return;
-                }
-            }
-            */
-            
+            int h = Inv.currentselect;
+            if (!back) { h++; } else { h--; }
+            if (h >= Inv.maxitems) { h = 0; } else if (h < 0) { h = Inv.maxitems-1; }
+            HoldItem(h);
         }
 
         public void HoldItem(int i)
         {
-            Inventory Inv = GetComponentInChildren<Inventory>();
             if (Inv == null) { return; }
-            heldItem = i;
-            HeldItem = Inv.SetHeld(i);
+            Transform holdnew = Inv.SetHeld(i);
+            if (holdnew != HeldItem & HeldItem!=null) { HeldItem.gameObject.SetActive(false); }
+            HeldItem = holdnew;
+            if (HeldItem != null)
+            {
+                HeldItem.gameObject.SetActive(true);
+                HeldItem.localPosition = ItemholdLocation;
+                //HeldItem.localPosition = ItemholdLocation;
+            }
+        }
+
+        public int HoldIndex()
+        {
+            if (Inv == null) { return -1; }
+            return Inv.currentselect;
         }
         #endregion
 
@@ -270,6 +285,8 @@ namespace Character
                 }
                 else { stopMove = false; if (dieflag) { Destroy(gameObject); } }
             }
+            if (HeldItem != null) { HeldItem.transform.localPosition = ItemholdLocation; } //Might make the item glitch when game lags, have to check
+
             //if (!onGround) { RB.gravityScale = 1.4f; } else { RB.gravityScale = 1; }
         }
 

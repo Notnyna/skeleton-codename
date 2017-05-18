@@ -22,12 +22,13 @@ namespace Item
         {
             DefSprite = GetComponent<SpriteRenderer>().sprite;
             if (transform.childCount > 0) { return; }
-            GameObject InvItem = new GameObject("ItemInSlot");
+            GameObject InvItemG = new GameObject("ItemInSlot");
+            InvItem = InvItemG.transform;
             InvItem.transform.SetParent(transform);
             InvItem.transform.localPosition = new Vector3(0, 0, 0);
-            SpriteRenderer InvSpriteR = InvItem.AddComponent<SpriteRenderer>();
-
             InvItem.transform.localScale = InvItemScale;
+
+            SpriteRenderer InvSpriteR = InvItemG.AddComponent<SpriteRenderer>();
             InvSpriteR.sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 1;
         }
 
@@ -52,14 +53,19 @@ namespace Item
         {
             if (InvItem==null)
             {
-                foreach (Transform T in transform)
-                {
-                    InvItem =T; //Why does it lose reference to it? 
-                }
-               // if (transform.childCount == 0)   { return null; }
+                //foreach (Transform T in transform)
+                //{
+                //    InvItem =T; //Why does it lose reference to it? 
+                //}
+                // if (transform.childCount == 0)   { return null; }
+                Debug.Log("No invItem for putting " + item.name);
             }
             Transform oldItem = RealItem;
             RealItem = item;
+            if (item == null) {
+                InvItem.GetComponent<SpriteRenderer>().sprite = null;
+                return item;
+            }
             InvItem.GetComponent<SpriteRenderer>().sprite = RealItem.GetComponent<SpriteRenderer>().sprite;
             return oldItem;
         }
