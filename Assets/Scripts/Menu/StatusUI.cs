@@ -23,17 +23,7 @@ namespace Menu
 
         private void OnEnable()
         {
-            HPBar.transform.localPosition=CalculateScreenPosition(HPpos);
-        }
-
-        private Vector3 CalculateScreenPosition(Vector2 where) // Can make static since pretty useful
-        {
-            var frustumh = (2.0f * 10 * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad));// * Camera.main.aspect;
-            Vector3 pos = new Vector2(
-                frustumh*Camera.main.aspect*where.x / 200, 
-                frustumh * where.y/200
-                );
-            return pos;
+            HPBar.transform.localPosition=UsefulStuff.CalculateScreenPosition(HPpos);
         }
 
         private void CameraT_TargetSwitched(Transform T)

@@ -3,14 +3,15 @@
 namespace Interact
 {
     /// <summary>
-    /// pxx - change portrait
-    /// zx.x - pause
+    /// "xxxx" - write dialogue (x is text) 
+    /// pxx - change portrait (x is index)
+    /// zxxx - pause (x is float number)
     /// more to come
     /// </summary>
     public class DoDialog : MonoBehaviour
     {
         Menu.StoryModeUI SM;
-        public string[] Dialog; // Format for dialogue example: p01"lit by dead,"z1.0p02" dying stars?"
+        public string[] Dialog;
 
         private void Awake()
         {

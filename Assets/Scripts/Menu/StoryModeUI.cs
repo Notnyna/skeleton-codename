@@ -9,7 +9,7 @@ namespace Menu
         public GameObject TextM; //Must hold TextMesh
         private GameObject P; //Portrait
         private TextMesh TM; //TextMesh of TextM
-        private string[] D; //Current dialogue
+        private string[] D= new string[] { "\", no space\"" }; //Current dialogue
         private int Di; // Index of current line in array
         private int Li; // Index of current character in line
         private string T; //current text being written
@@ -32,7 +32,7 @@ namespace Menu
             SpriteRenderer Psp = P.AddComponent<SpriteRenderer>();
             Psp.sortingOrder = 100;
             P.transform.parent = transform;
-            P.transform.localScale = new Vector3(5,5);
+            P.transform.localScale = new Vector3(7,7);
         }
 
         private void OnDisable()
@@ -45,13 +45,15 @@ namespace Menu
         {
             //Calculates the width of screen and positions the box
             Vector2 xy = Box.GetComponent<SpriteRenderer>().sprite.bounds.size;
-            float frustumWidth = (2.0f * 10 * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad)) * Camera.main.aspect;
-
-            Box.transform.localScale = new Vector2(frustumWidth/xy.x,3);
-            Box.transform.localPosition = new Vector3(0, -frustumWidth / Camera.main.aspect + xy.y*4.5f, 0); //localscale.y+localscale.y/2 (center offset)
-            //PortaitPos = 0;//new Vector2(Screen.currentResolution.width/4,1.5f); //Hardcoding is bad DYNAMIC HARDCODE EVERYTHING
-            P.transform.localPosition = CalculateScreenPosition(new Vector2(65,-65));
-            TextM.transform.localPosition = CalculateScreenPosition(new Vector2(-90,-45));
+            float frustumH = UsefulStuff.GetScreenHeight();
+            float frustumW = frustumH * Camera.main.aspect;
+            Box.transform.localScale = new Vector2(frustumW/xy.x,(frustumH/3)/xy.y);
+            Box.transform.localPosition = UsefulStuff.CalculateScreenPosition(new Vector2(0,-70));
+            //Box.transform.localPosition = new Vector3(0, -frustumH/2 + xy.y*Box.transform.localScale.y+xy.y*Box.transform.localScale.y*0.5f, 0); 
+                //Filling a sprite 1/4 of a screenxy.y*Box.transform.localScale.y
+                    //Hardcoding is bad DYNAMIC HARDCODE EVERYTHING
+            P.transform.localPosition = UsefulStuff.CalculateScreenPosition(new Vector2(65,-70));
+            TextM.transform.localPosition = UsefulStuff.CalculateScreenPosition(new Vector2(-90,-45));
             DisablePlayer();
         }
 
@@ -177,6 +179,11 @@ namespace Menu
         public void Skip()
         {
             counter = 0;
+            if (waitfornext)
+            {
+                waitfornext = false;
+                Clear();
+            }
         }
 
         public void Clear()
@@ -200,14 +207,5 @@ namespace Menu
             }
         }
 
-        private Vector3 CalculateScreenPosition(Vector2 where)
-        {
-            var frustumh = (2.0f * 10 * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad));// * Camera.main.aspect;
-            Vector3 pos = new Vector2(
-                frustumh * Camera.main.aspect * where.x / 200,
-                frustumh * where.y / 200
-                );
-            return pos;
-        }
     }
 }

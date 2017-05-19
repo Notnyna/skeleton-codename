@@ -14,7 +14,7 @@ namespace Menu
         int currentPlayer=0;
         private Scenario.CameraControl CameraT;
 
-        private void Start()
+        private void Awake()
         {
             CameraT = Camera.main.GetComponent<Scenario.CameraControl>();
             //Players= new List<Character.Player>();
@@ -41,6 +41,7 @@ namespace Menu
 
         public void EnableControls()
         {
+            if (Players[currentPlayer] == null) {  return; } //Debug.Log("No current player, logically shouldn't happen");
             Players[currentPlayer].enabled = true;
         }
 

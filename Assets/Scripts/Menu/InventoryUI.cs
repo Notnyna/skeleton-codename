@@ -9,7 +9,7 @@ namespace Menu
     {
         private Item.ItemSlot[] Slots;
         private bool created = false;
-        public Vector2 slotPos= new Vector2(-10,-10);
+        // Vector2 slotheight= new Vector2(-60,-60);
         public float slotPosSpace = 1f;
         public GameObject slotPrefab;
 
@@ -85,11 +85,17 @@ namespace Menu
             Slots = new Item.ItemSlot[slotAmount];
 
             float xtent = slotPrefab.GetComponent<SpriteRenderer>().sprite.bounds.size.x*slotPrefab.transform.localScale.x;
+            float width = UsefulStuff.GetScreenWidth();
+            float y= UsefulStuff.CalculateScreenPosition(new Vector2(0, -60)).y;
             for (int i = 0; i < slotAmount; i++)
             {
                 Slots[i] = Instantiate(slotPrefab).GetComponent<Item.ItemSlot>();
                 Slots[i].transform.SetParent(this.transform);
-                Slots[i].transform.localPosition = new Vector3(slotPos.x + xtent * i+slotPosSpace*i, slotPos.y, 0);
+                Slots[i].transform.localPosition = new Vector3(
+                    (-width/2)+(width/(slotAmount+1))*(i+1)
+                    , y
+                    );
+                    //new Vector3(slotPos.x + xtent * i+slotPosSpace*i, slotPos.y, 0);
             }
         }
 

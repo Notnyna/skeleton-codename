@@ -17,7 +17,7 @@ namespace Character
         //private List<Transform> bodyparts;
         //private List<Transform> inventory;
         private Rigidbody2D RB;
-        private SpriteRenderer SR;
+        //private SpriteRenderer SR;
         private General.ListAnimation LS;
         private Inventory Inv;
 
@@ -40,7 +40,7 @@ namespace Character
             //bodyparts = new List<Transform>();
             //inventory = new List<Transform>();
             RB = GetComponent<Rigidbody2D>();
-            SR = GetComponent<SpriteRenderer>();
+            //SR = GetComponent<SpriteRenderer>();
             LS = GetComponent<General.ListAnimation>();
             Inv = GetComponentInChildren<Inventory>();
             //HIJoint = new FixedJoint2D();
@@ -199,6 +199,7 @@ namespace Character
             //Debug.Log(iscale.ToString());
             //if ((flip & iscale.x > 0) | (!flip & iscale.x < 0)) { iscale = new Vector3(-iscale.x, iscale.y, 1); Debug.Log("flipping item"); } 
             HoldItem(Inv.currentselect);
+            DoAnimation(3, false);
             return true;
         }
 

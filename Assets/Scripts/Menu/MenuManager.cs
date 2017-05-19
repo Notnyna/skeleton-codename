@@ -18,7 +18,7 @@ namespace Menu
     public class MenuManager : MonoBehaviour
     {
         public List<Transform> Menus = new List<Transform>();
-        private int currmenu=0;
+        private int currmenu;
         public bool disableControl;
         public string openinv = "i";
 
@@ -39,12 +39,10 @@ namespace Menu
         public void NoMenu() { //Might have to redo, this not only looks bad, it works bad
             if (disableControl) { return; }
             //if (Menus == null) { Debug.Log("No menus? why"); return; }
-            if (Menus[currmenu] == null) {
-                foreach (Transform m in Menus) {
-                    if (m != null) { m.gameObject.SetActive(false); } //Maybe just do it in the first place
-                }
-                return;
-            }
+            if (Menus[0] != null) { Menus[0].gameObject.SetActive(false); }
+            if (Menus[1] != null) { Menus[1].gameObject.SetActive(false); }
+            if (Menus[2] != null) { Menus[2].gameObject.SetActive(false); }
+            if (Menus[3] != null) { }// Menus[3].gameObject.SetActive(false); }
             //Menus[currmenu].gameObject.SetActive(false);
             currmenu = 0;
         }
@@ -70,7 +68,7 @@ namespace Menu
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape)) { NoMenu(); }
+            //if (Input.GetKeyDown(KeyCode.Escape)) { NoMenu(); }
             if (Input.GetKeyDown(openinv)) { ChangeMenu(2); }
         }
 

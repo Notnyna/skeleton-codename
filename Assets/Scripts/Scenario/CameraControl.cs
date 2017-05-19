@@ -66,7 +66,7 @@ namespace Scenario
                 //C.orthographicSize = CameraSize + Vector2.Distance(Target.transform.position, transform.position) / 10f;
             }
 
-            transform.position = new Vector3(MovePoint.x, MovePoint.y, -10);
+            transform.position = new Vector3(MovePoint.x, MovePoint.y,transform.position.z);
         } //EndUpdate
     }
 }

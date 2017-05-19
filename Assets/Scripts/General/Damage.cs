@@ -34,7 +34,7 @@ namespace General
             Transform cg = collision.transform;
             if (cg.CompareTag("Monster") | cg.CompareTag("Player"))
             {
-                DoDamage(cg);
+                DoDamage(cg,transform.position); //maybe just put the bullet position?
             }
         }
 
@@ -45,18 +45,18 @@ namespace General
             Transform cg = collision.transform;
             if (cg.CompareTag("Monster") | cg.CompareTag("Player"))
             {
-                DoDamage(cg);
+                DoDamage(cg,transform.position);
             }
         }
 
-        private void DoDamage(Transform cg)
+        private void DoDamage(Transform cg, Vector2 point)
         {
             Character.Health h;
             if (cg.CompareTag("Monster")) { h = cg.GetComponentInParent<Character.Health>(); }
             else { h = cg.GetComponent<Character.Health>(); }
             //if (CH == h) { return; } //Maybe deal damage per frame ? Must save all targets though
             //if (CH == null) { CH = h; }
-            if (h != null) { h.DealDamage(Dmg); }
+            if (h != null) { h.DealDamage(Dmg,point); }
             if (Apierce == 0)
             {
                 Evaporate();
@@ -70,7 +70,7 @@ namespace General
         {
             if (LS != null)
             {
-                LS.PlayAnimation(2,false); // 0 - fire, 1 - travel, 2 - destroy
+                LS.PlayAnimation(2,true); // 0 - fire, 1 - travel, 2 - destroy
                 primeTime = LS.currentAniTime();
             }
             else { primeTime = 0.2f; }
@@ -86,7 +86,7 @@ namespace General
             else { 
             if (LS != null & LS.AniIndex == 0) { LS.PlayAnimation(1, true); }
             if (destroy) { Destroy(this.gameObject); }
-            }
+            } //endelse
 
             if (lifetime > 0)
             {

@@ -46,12 +46,12 @@ namespace Interact
         {
             OnEnable();
         }
-        /*
+        
         private void OnDestroy()
         {
-            //Interactible I = GetComponent<Interactible>();
-            //if (I != null & interactflag) { I.OnInteract -= I_OnInteract; }
+            Interactible I = GetComponent<Interactible>();
+            if (I != null) { I.OnInteract -= I_OnInteract; }
         }
-        */
+        
     }
 }

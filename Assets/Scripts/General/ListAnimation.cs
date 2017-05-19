@@ -5,12 +5,13 @@ using UnityEngine;
 namespace General
 {
     /// <summary>
+    /// Is very picky about sprite location!
     /// Reserved for characters(Humus) - 
     /// 0 Idle
     /// 1 Walk
     /// 2 Run
-    /// 3 Action
-    /// 4 Attack
+    /// 3 Action (pick up item etc)
+    /// 4 Attack (really? maybe replace with jump)
     /// 5 Death
     /// </summary>
     public class ListAnimation : MonoBehaviour

@@ -20,15 +20,12 @@ namespace Interact
         public float cooldown = 1f;
         private float counter;
 
-        public bool animate = false;
-        private General.ListAnimation LS;
-        public int playanimation;
-        public int increaseani=0;
-
         private void Awake()
         {
-            if (animate) { LS = GetComponent<General.ListAnimation>(); if (LS == null) { animate = false; } }
-            Targets = new List<Character.Player>(FindObjectsOfType<Character.Player>());
+            Menu.GameMaster GM = FindObjectOfType<Menu.GameMaster>();
+            Targets=GM.Players;
+            if (Targets.Count==0) { Debug.Log("No players?!"); }
+            //Targets = new List<Character.Player>(FindObjectsOfType<Character.Player>());
             //Debug.Log("Players found: " + Targets.Count);
         }
 
@@ -64,15 +61,15 @@ namespace Interact
         private void OnDisable()
         {
             //Targets.Clear();
-            //foreach (Character.Player p in Targets)
-            //{
-            //    p.OnAction -= PlayerInteract;
-            //}
+            foreach (Character.Player p in Targets)
+            {
+                p.OnAction -= PlayerInteract;
+            }
         }
 
         private void OnEnable()
         {
-            if (transform.parent != null) { return; }
+            //if (transform.parent != null) { return; }
             //Targets.Clear();
             foreach (Character.Player p in Targets)
             {
@@ -80,16 +77,9 @@ namespace Interact
             }
         }
 
-        public void Animate()
-        {
-            if (animate)
-            {
-                LS.PlayAnimation(playanimation+increaseani, true);
-            }
-        }
-
         public void PlayerInteract(Transform who)
         {
+            //Debug.Log(Vector2.Distance(who.transform.position, transform.position).ToString());
             if (Vector2.Distance(who.transform.position, transform.position) < range) { BecomeInteracted(who); };
         }
 
