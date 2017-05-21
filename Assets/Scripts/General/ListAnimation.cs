@@ -5,7 +5,8 @@ using UnityEngine;
 namespace General
 {
     /// <summary>
-    /// Is very picky about sprite location!
+    /// Is very picky about sprite location! 
+    /// Can be improved by not changing sprite if it is equal, without comparing sprites
     /// Reserved for characters(Humus) - 
     /// 0 Idle
     /// 1 Walk
@@ -20,7 +21,6 @@ namespace General
         public string[] Animations = null;
         public float[] STime = null;
 
-        //public bool AnimateAll = false;  // To start sprite animating [DEBUG]
         private bool repeat = false; //Repeat current sequence?
 
         public float timescale = 1f; //To quickly hasten or slow animations
@@ -83,7 +83,6 @@ namespace General
                 S = 0;
                 repeat = rep;
                 
-
                 for (int i = 0; i < F; i++)
                 {
                     currentAni[i]=int.Parse(anisprites[i]);

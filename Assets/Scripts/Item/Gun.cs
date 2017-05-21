@@ -4,15 +4,26 @@ namespace Item
 {
     /// <summary>
     /// To use safely prime time of bullet damage must not hit the user.
+    /// 
+    /// Gun animation reservations:
+    /// 0-Idle/ammo full
+    /// 1-fire
+    /// 2-ammo empty
+    /// 3-ammo mid
+    /// 4-ammo low
+    /// 
     /// </summary>
     public class Gun : MonoBehaviour
     {
         public GameObject Bullet;
         public float bulletoffset=1;
-        public int ammo;
+        public int clip; //Can be improved by lots and lots and lots
+        public float reloadtime;
         public float cooldown;
+        public bool autoreload;
+
+        private int cclip; //current clip
         private float counter;
-        //private Character.Player Handler;
         private bool canfire;
         public float fireforce = 10;
         General.ListAnimation LS;
@@ -21,61 +32,92 @@ namespace Item
         {
             LS = GetComponent<General.ListAnimation>();
             if (Bullet == null) { Debug.Log("Shooting nothing!"); }
+            cclip = clip;
         }
 
-        /*private void OnEnable()
-        {
-            Handler = GetComponentInParent<Character.Player>();
-            if (Handler != null) {
-                Handler.OnActivate += Fire;
-            }
-        }*/
-        public void Fire()//float direction) Should implement rotation if dont want to fire only according to gun
+        public void Fire(Vector2 v=new Vector2())//float direction) Should implement rotation if dont want to fire only according to gun
         {
             if (!canfire) { return; }
-
             GameObject b = Instantiate(Bullet);
             //float flip = -1;
             //if (transform.lossyScale.x < 0) { flip = 1; }
-            Vector2 Boff = CalculateRotationUnitVector();
+            bool flip=false;
+            if (transform.lossyScale.x > 0) { flip = true; }
+            Vector2 Boff = Menu.UsefulStuff.FromRotationToVector(transform.rotation.eulerAngles.z,flip);
             b.transform.position = new Vector3(transform.position.x+Boff.x*bulletoffset, transform.position.y+Boff.y*bulletoffset,1);
             b.transform.rotation = transform.rotation;
 
             Rigidbody2D brb=b.GetComponent<Rigidbody2D>();
 
             if (transform.lossyScale.x < 0) { b.transform.localScale = new Vector2(-b.transform.localScale.x, b.transform.localScale.y); }
-
+            //Debug.Log(GetComponent<Rigidbody2D>().velocity.ToString());
             brb.AddForce(
-                Boff*fireforce
+                (Boff * fireforce) + v
                 ,ForceMode2D.Impulse);
 
+            cclip--;
+            firing = true;
             counter = cooldown;
             canfire = false;
+            FireAni();
         }
 
-
-        private Vector2 CalculateRotationUnitVector()//float rotation)
+        public void ReloadAni()
         {
-            //Calculate a unit vector in the direction of its rotation
-            float flip = 0;
-            if (transform.lossyScale.x > 0) { flip = 180; }
-            float rotation = (transform.rotation.eulerAngles.z+flip)*Mathf.Deg2Rad;
-            //Sin and cos have no idea what negative values are. Or maybe it is just me?
-            Vector2 v = new Vector2(Mathf.Cos(rotation), Mathf.Sin(rotation));
-            return v;
-        }
-
-        /*private void OnDisable()
-        {
-            if (Handler != null)
+            if (LS == null) { return; }
+            //if (cclip == 0 | clip==0) { LS.PlayAnimation(4); return; }
+            for (int i = 1; i < 4; i++)
             {
-                Handler.OnActivate -= Fire;
+                //Debug.Log((clip / 4) * i);
+                if (cclip <= (clip / 4) * i) { LS.PlayAnimation(i+1); return; }
             }
-        }*/
+        }
+
+        public void FireAni()
+        {
+            if (LS==null) { return; }
+            LS.PlayAnimation(1);
+        }
+
+        public void Reload(int i=-1)
+        {
+            if (i < 0) { cclip = clip; counter = reloadtime; canfire = false; }
+            else {
+                if (cclip+i <= clip)
+                {
+                    cclip += i;  rcounter = reloadtime;
+                }
+            }
+            
+        }
+
+        private bool firing;
+        private float rcounter;
 
         private void Update()
         {
-            if (counter > 0) { counter -= Time.deltaTime; } else { canfire = true; }
+            if (counter > 0) {
+                counter -= Time.deltaTime;
+                firing = false;
+            } else {
+                if (cclip > 0) { canfire = true; }
+            }
+
+            if (rcounter > 0)
+            {
+                rcounter -= Time.deltaTime;
+            }
+            else {
+                if (!firing & autoreload) { Reload(1); }
+            }
+            ReloadAni();
+            
+        }
+
+        private void OnEnable()
+        {
+            counter = 0;
+            if (autoreload) { Reload(4); }
         }
 
     }

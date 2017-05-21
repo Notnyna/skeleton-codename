@@ -12,24 +12,20 @@ namespace General
     public class SpawnFX : MonoBehaviour
     {
         public List<GameObject> debriprefab; //To do - ability to select specific debri
-        public float timealive;
         //public float maxparticles;
         public float debrispeed;
         //private List<Transform> trackDebri;
 
-        private void Start()
+        public void DoFX(float direction, Vector2 spawnpoint, float dev,float sdev, int[] pref, int burst=1)
         {
-            //trackDebri = new List<Transform>();
-        }
-
-        public void DoFX(float direction, Vector2 spawnpoint, float dev,float sdev, int burst=1)
-        {
-            int c = debriprefab.Count;
+            int c = pref.Length;
 
             for (int i = 0; i < burst; i++)
             {
                 int di = Mathf.FloorToInt(Random.Range(0, c));
-                SpawnDebri(di,spawnpoint, Random.Range(direction-dev,direction+dev),Random.Range(debrispeed-sdev,debrispeed+sdev)); //Random.Range(debrispeed-dev,debrispeed+dev));
+                //Debug.Log(di +  " is " + pref[di] + "  count " + debriprefab.Count);
+                if (pref[di]>=debriprefab.Count) { Debug.Log("Cant find debri prefab " + pref[di]); return; }
+                SpawnDebri(pref[di],spawnpoint, Random.Range(direction-dev,direction+dev),Random.Range(debrispeed-sdev,debrispeed+sdev)); //Random.Range(debrispeed-dev,debrispeed+dev));
             }
         }
 

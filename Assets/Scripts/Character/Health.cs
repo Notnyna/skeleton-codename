@@ -19,6 +19,8 @@ namespace Character
         private Humus H;
         private General.SpawnFX FX;
 
+        private float bleedcount;
+
         private void Start()
         {
             H=  GetComponent<Humus>();
@@ -26,17 +28,17 @@ namespace Character
             if (H == null) { Debug.Log("No humus, no health"); Destroy(this); }
         }
 
-        public void DealDamage(int dmg, Vector2 location)
+        public void DealDamage(int dmg, Vector2 location,float direction)
         {
             HP -= dmg;
             
-            if (FX != null) { FX.DoFX(CalculateDirection(location), location, 50,10, 1); }
+            if (FX != null) { FX.DoFX(direction, location, 50,10, new int[]{ 0,1,2}); }
             if (HpChanged != null) { HpChanged(); }
         }
 
         private float CalculateDirection(Vector2 from) //Good enough for now ?
         {
-            Vector2 line = new Vector2( transform.position.x,transform.position.y) - from;
+            Vector2 line = new Vector2( from.x - transform.position.x,from.y -transform.position.y);
             float ex = 180;
             if (from.y>transform.position.y) { ex = 0; }
             float d = Mathf.Atan2(line.y,line.x)*Mathf.Rad2Deg+ex;

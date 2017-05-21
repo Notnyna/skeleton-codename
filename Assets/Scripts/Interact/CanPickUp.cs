@@ -6,6 +6,7 @@ namespace Interact
     {
         public Character.Humus Owner;
         //private bool interactflag = false;
+        public Vector2 HoldOver = new Vector2();
 
         private void Start()
         {
@@ -24,22 +25,18 @@ namespace Interact
         {
             //Debug.Log("Giving if possible!");
             if (Owner == null && Owner!=H) {
-                Owner = H; H.TakeItem(this.transform);
+                if (H.TakeItem(this.transform)) { Owner = H; }
                 //Should disable Interactible
             }
         }
 
-        /*private void OnDisable()
-        {
-            OnDestroy();
-        }*/
-
         private void OnEnable()
         {
             Character.Humus H = GetComponentInParent<Character.Humus>();
-            if (H == null) { Owner = null; return; } //If no parent (owner), can be interacted again.
+            if (H == null) { Owner = null; return; } //If no parent (owner), can be interacted again. This is very bad?
             if (H != Owner) { H = Owner; } //If different parent (for whatever reason), he is now the owner!
             //If enabled and still belongs to owner, do nothing. (is still not interactible)
+            
         }
 
         private void OnTransformParentChanged()

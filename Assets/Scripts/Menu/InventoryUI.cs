@@ -84,7 +84,7 @@ namespace Menu
 
             Slots = new Item.ItemSlot[slotAmount];
 
-            float xtent = slotPrefab.GetComponent<SpriteRenderer>().sprite.bounds.size.x*slotPrefab.transform.localScale.x;
+            //float xtent = slotPrefab.GetComponent<SpriteRenderer>().sprite.bounds.size.x*slotPrefab.transform.localScale.x;
             float width = UsefulStuff.GetScreenWidth();
             float y= UsefulStuff.CalculateScreenPosition(new Vector2(0, -60)).y;
             for (int i = 0; i < slotAmount; i++)

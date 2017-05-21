@@ -65,40 +65,81 @@ namespace Character
             if (OnActivate != null) { OnActivate(Camera.main.ScreenToWorldPoint(Input.mousePosition)); }
             if (H.HeldItem !=null) {
                 Item.Gun G = H.HeldItem.GetComponent<Item.Gun>();
-                if (G != null) { G.Fire(); }
+                if (G != null) { G.Fire(GetComponent<Rigidbody2D>().velocity); }
 
             } // I dont like this, I want it the other way around!
         }
 
+
+        private bool allowflip=true;
         private void Update()
         {
             float axis = Input.GetAxis("Horizontal");
             if (axis != 0)
             {
                 if (Input.GetKeyDown(runbutton)) { running = true; }
+                if (running)
                 {
-                    if (running)
-                    {
-                        if (H.Move(moveforce * axis * 2)) { H.DoAnimation(2, true); }
-                    }
-                    else
-                    {
-                        if (H.Move(moveforce * axis)) { H.DoAnimation(1, true); }
-                    }
+                    if (H.Move(moveforce * axis * 2)) { H.DoAnimation(2, true); }
+                }
+                else
+                {
+                    if (H.Move(moveforce * axis,allowflip)) { H.DoAnimation(1, true); }
                 }
             }
             else {
                 running = false;
-                if (Input.GetKeyDown(runbutton)) {
-                    H.DoAnimation(3, false,true); //How about implement full mouse aiming!?
-
+                //if (Input.GetKeyDown(runbutton)) { aiming = true; H.DoAnimation(3, false, true); }  //How about implement full mouse aiming!?
+                //if (aiming)
+                //{
+                    
+                //}
+            } //endElse
+            if (!running)
+            {
+                if (H.HeldItem != null)
+                {
+                    float torot = Menu.UsefulStuff.MouseToPointRotation(H.HeldItem.transform.position);
+                    if (H.flip) //-90 to 90  When !flip 90 to -90(up)  When flip 270 to 90(up)
+                    {
+                        torot += 180f;
+                        if (torot>270f | torot<90f)
+                        {
+                            allowflip = false;
+                            H.HeldItem.rotation = Quaternion.Euler(0, 0, torot);
+                        }
+                        else
+                        {
+                            allowflip = true;
+                            H.Move(-1);
+                            //Debug.Log("Flippin out");
+                            allowflip = false;
+                        }
+                    }
+                    else
+                    {
+                        if (Mathf.Abs(torot) < 90f)
+                        {
+                            allowflip = false;
+                            H.HeldItem.rotation = Quaternion.Euler(0, 0, torot);
+                        }
+                        else
+                        {
+                            allowflip = true;
+                            //Debug.Log("Unflippin out");
+                            H.Move(1);
+                            allowflip = false;
+                        }
+                    }
                 }
-
+                else { allowflip = true;  }
+            }
+            else {
+                if (H.HeldItem != null) { H.HeldItem.rotation = Quaternion.Euler(0, 0, 0); }
             }
             if (Input.GetKeyDown(jumpkey)) { H.Jump(jumpforce);} 
             if (Input.GetKeyDown(actionbutton)) { DoAction(); }
             if (Input.GetKeyDown(dropkey)) { H.ReturnItem(); }
-            //if (Input.GetKeyDown(aimbutton)) { H.DoAnimation(3, false, true, 0.4f); }
             if (Input.GetKeyDown("q")) { H.HoldNextItem(true); }
             if (Input.GetKeyDown("e")) { H.HoldNextItem(); }
             if (Input.GetMouseButton(0)) { DoButtonAction(); }

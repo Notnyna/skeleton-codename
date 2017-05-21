@@ -18,7 +18,7 @@ namespace Menu
     public class MenuManager : MonoBehaviour
     {
         public List<Transform> Menus = new List<Transform>();
-        private int currmenu;
+        //private int currmenu;
         public bool disableControl;
         public string openinv = "i";
 
@@ -44,7 +44,7 @@ namespace Menu
             if (Menus[2] != null) { Menus[2].gameObject.SetActive(false); }
             if (Menus[3] != null) { }// Menus[3].gameObject.SetActive(false); }
             //Menus[currmenu].gameObject.SetActive(false);
-            currmenu = 0;
+           // currmenu = 0;
         }
         /// <summary>
         /// 0 - Main menu (exit - pause)
@@ -58,7 +58,7 @@ namespace Menu
             if (Menus[m] == null) { return; }
             if (Menus[m].gameObject.activeSelf & !dontdisable) { Menus[m].gameObject.SetActive(false); }
             else { Menus[m].gameObject.SetActive(true); }
-            currmenu = m;
+            //currmenu = m;
         }
 
         private void FixedUpdate()

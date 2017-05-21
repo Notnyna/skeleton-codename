@@ -30,9 +30,9 @@ namespace Menu
             Box = Instantiate(Box, transform); //Can I do that? of course.
             P = new GameObject("Portrait");
             SpriteRenderer Psp = P.AddComponent<SpriteRenderer>();
-            Psp.sortingOrder = 100;
+            Psp.sortingOrder = 101;
             P.transform.parent = transform;
-            P.transform.localScale = new Vector3(7,7);
+            P.transform.localScale = new Vector3(10,10);
         }
 
         private void OnDisable()

@@ -22,14 +22,14 @@ namespace Character
         private Inventory Inv;
 
         public Transform HeldItem;
-        public Vector2 ItemholdLocation;
-        //private FixedJoint2D HIJoint;
+        public Vector2 ItemholdLocation; //default hold
+        //private FixedJoint2D HIJoint;  //Would be much better
 
         public int jumps = 1;
         private int cjumps;
         private bool onGround;
         private bool stopMove;
-        private bool flip=false; //Scale is >0 if false, 0< if true
+        public bool flip { get; private set; } //Scale is >0 if false, 0< if true
         private bool dieflag;
 
 
@@ -47,7 +47,7 @@ namespace Character
             //UpdateParts();
         }
 
-        public bool Move(float force) {
+        public bool Move(float force, bool allowflip=true) {
             if (stopMove) { return false; } //RB.velocity = new Vector2(0,RB.velocity.y); 
             if (RB == null) { return false; }
             if (!onGround)
@@ -65,7 +65,7 @@ namespace Character
                 }
                 //RB.velocity = new Vector2(force, 0);
             }
-            
+            if (!allowflip) { return true; }
             if (force < 0 & flip) {
                 //if (SR == null) {
                     transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, 1);
@@ -286,9 +286,14 @@ namespace Character
                 }
                 else { stopMove = false; if (dieflag) { Destroy(gameObject); } }
             }
-            if (HeldItem != null) { HeldItem.transform.localPosition = ItemholdLocation; } //Might make the item glitch when game lags, have to check
+             //Might make the item glitch when game lags, have to check
 
             //if (!onGround) { RB.gravityScale = 1.4f; } else { RB.gravityScale = 1; }
+        }
+
+        private void FixedUpdate()
+        {
+            if (HeldItem != null) { HeldItem.GetComponent<Rigidbody2D>().MovePosition(ItemholdLocation+new Vector2(transform.position.x,transform.position.y)); }
         }
 
     }

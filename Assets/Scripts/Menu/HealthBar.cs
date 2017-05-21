@@ -26,7 +26,7 @@ namespace Menu
         private void Target_HpChanged()
         {
             int hp = Target.HP;
-            if (hp > 3) { hp = 3; }
+            if (hp > 3) { hp = 3; } //Simple, who need more ??
             if (hp < 1) { hp = 1; }
             LS.PlayAnimation(4-hp,true,true);
         }

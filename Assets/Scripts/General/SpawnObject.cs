@@ -2,12 +2,11 @@
 
 namespace General
 {
-    public class SpawnText: MonoBehaviour
+    public class SpawnObject: MonoBehaviour
     {
         public GameObject[] Texts;
         public Vector2 offset = new Vector2(0,0);
         public float speed;
-        public float life;
 
         public void Spawn(int i)
         {
@@ -29,7 +28,7 @@ namespace General
                 SR=part.GetComponent<SpriteRenderer>();
                 if (part.gameObject.activeSelf && SR != null)
                 {
-                    float t = SR.sprite.bounds.extents.y+part.transform.localPosition.y;
+                    float t = SR.sprite.bounds.extents.y*part.lossyScale.y+part.transform.localPosition.y;
                     if (t > x) { x = t; }
                 }
             }
