@@ -30,16 +30,16 @@ namespace General
                 primeTime = LS.currentAniTime();
                 //Debug.Log(primeTime);
             }
-            if (FX != null)  //FX reserved for bullets: 0 - Fire, 1 2 - Travel, 3 - Destroy
+            if (FX != null)  //FX reserved for bullets: 0 - Fire, 1 2 - Travel, 3 - Destroy (hit)
             {
                 FX.DoFX(transform.rotation.eulerAngles.z,transform.position,30,10,new int[] { 0 },3);
-
             }
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if (destroy) { return; }
+            //if (collision.transform == transform) { return; }
             Transform cg = collision.transform;
             if (cg.CompareTag("Monster") | cg.CompareTag("Player") | cg.CompareTag("Ground"))
             {
@@ -51,6 +51,7 @@ namespace General
         {
             //Debug.Log("Trigger! " + collision.name);
             if (destroy) { return; }
+            //if (collision.transform == transform.parent) { return; }
             Transform cg = collision.transform;
             if (cg.CompareTag("Monster") | cg.CompareTag("Player") | cg.CompareTag("Ground"))
             {
@@ -68,8 +69,10 @@ namespace General
             //if (CH == null) { CH = h; }
             if (h != null) {
                 if (punch != 0) {
-                    Rigidbody2D rb = GetComponent<Rigidbody2D>();
-                    h.GetComponent<Rigidbody2D>().AddForceAtPosition(rb.velocity.normalized*punch,cg.position, ForceMode2D.Impulse);
+                    //Rigidbody2D rb = GetComponent<Rigidbody2D>();
+                    bool flip = false; ;
+                    if (transform.lossyScale.x < 0) { flip = true; }
+                    h.GetComponent<Rigidbody2D>().AddForceAtPosition(Menu.UsefulStuff.FromRotationToVector(transform.rotation.eulerAngles.z,flip).normalized*-punch,cg.position, ForceMode2D.Impulse);
 
                 }
                 h.DealDamage(Dmg,point,transform.rotation.z);
@@ -80,6 +83,7 @@ namespace General
                 return;
             }
             Apierce--;
+            if (FX != null) { FX.DoFX(transform.rotation.eulerAngles.z, transform.position, 10, 3, new int[] { 3 }, 1); }
             //Debug.Log("Doing damage!");
         }
 
@@ -104,7 +108,7 @@ namespace General
                 primeTime -= Time.deltaTime;
             }
             else { 
-            if (LS != null & LS.AniIndex == 0) { LS.PlayAnimation(1, true); }
+            if (LS != null && LS.AniIndex == 0) { LS.PlayAnimation(1, true); }
             if (destroy) { Destroy(this.gameObject); }
             } //endelse
 
@@ -117,7 +121,7 @@ namespace General
                 //}
                 lifetime -= Time.deltaTime;
             }
-            else { destroy = true; }
+            else { Evaporate(); }
 
             if (FX != null)
             {

@@ -97,7 +97,9 @@ namespace Character
             } //endElse
             if (!running)
             {
-                if (H.HeldItem != null)
+                General.MoveAnimation Mv=null;
+                if (H.HeldItem != null) { Mv= H.HeldItem.GetComponent<General.MoveAnimation>(); } //This is pretty bad
+                if (((H.HeldItem != null && Mv!= null) && Mv.AniIndex < 1) | (H.HeldItem!=null && Mv==null)) //Bad? I dunno
                 {
                     float torot = Menu.UsefulStuff.MouseToPointRotation(H.HeldItem.transform.position);
                     if (H.flip) //-90 to 90  When !flip 90 to -90(up)  When flip 270 to 90(up)

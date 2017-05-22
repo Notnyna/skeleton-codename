@@ -118,6 +118,12 @@ namespace Item
         {
             counter = 0;
             if (autoreload) { Reload(4); }
+            General.MoveAnimation Mv = GetComponent<General.MoveAnimation>();
+            if (Mv != null && GetComponentInParent<Character.Humus>() !=null) {
+                Mv.PlayAnimation(1);
+                counter = Mv.currentAniTime();
+                canfire = false;
+            }
         }
 
     }

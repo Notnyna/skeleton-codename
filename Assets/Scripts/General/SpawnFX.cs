@@ -42,12 +42,6 @@ namespace General
                 drb.AddForce(new Vector2(Mathf.Cos(dir),Mathf.Sin(dir))*speed,ForceMode2D.Impulse);
             }
         }
-        //private float d=0;
-        private void Update()
-        {
-            //DEBUG
-            //if (Input.GetKeyDown("k")) { DoFX(d,transform.position,1,1); d+=10; Debug.Log(d); }
-        }
 
     }
 }

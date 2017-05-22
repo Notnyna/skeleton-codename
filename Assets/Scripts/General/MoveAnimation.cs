@@ -51,7 +51,8 @@ namespace General
                 {
                     try{
                         vparse = parse[i].Split(';');
-                        if (vparse.Length > 3)
+                        if (vparse.Length < 3) { currentAni[i] = new Vector3(); }
+                        else if (vparse.Length > 3)
                         {
                             currentAni[i] = new Vector4(
                                 float.Parse(vparse[0]),
@@ -84,10 +85,11 @@ namespace General
         public float currentAniTime()
         {
             //if (Animations[AniIndex] == null) { return 0; } Should not happen?
+            if (currentAni == null) { return 0; }
             float time = 0;
             for (int i = 0; i < currentAni.Length; i++)
             {
-                time += currentAni[i].z * timescale;
+                time += currentAni[i].w * timescale;
             }
             //Debug.Log("AniTime for " +gameObject.name + " : " + time);
             return time;
@@ -112,7 +114,7 @@ namespace General
 
         public void nextMove()
         {
-            if (currentAni == null) { return; }
+            if (currentAni == null) { return; } 
             //RB.MovePosition(new Vector2(RB.position.x+currentAni[C].x,RB.position.y+currentAni[C].y));
             //RB.MoveRotation(currentAni[C].z);
             //RB.AddTorque(currentAni[C].z);

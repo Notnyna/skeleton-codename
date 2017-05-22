@@ -25,18 +25,30 @@ namespace Interact
         {
             //Debug.Log("Giving if possible!");
             if (Owner == null && Owner!=H) {
-                if (H.TakeItem(this.transform)) { Owner = H; }
-                //Should disable Interactible
+                if (H.TakeItem(this.transform)) {
+                    Owner = H;
+                    Collider2D[] C = GetComponents<Collider2D>();
+                    for (int i = 0; i < C.Length; i++)
+                    {
+                        C[i].isTrigger = true;
+                    }
+                }
+                //Should disable Interactible and collision
             }
         }
 
         private void OnEnable()
         {
             Character.Humus H = GetComponentInParent<Character.Humus>();
-            if (H == null) { Owner = null; return; } //If no parent (owner), can be interacted again. This is very bad?
-            if (H != Owner) { H = Owner; } //If different parent (for whatever reason), he is now the owner!
-            //If enabled and still belongs to owner, do nothing. (is still not interactible)
-            
+            if (H!=null && H != Owner) { H = Owner; return; } //If different parent (for whatever reason), he is now the owner!
+            if (H == Owner) { return; }            //If enabled and still belongs to owner, do nothing. (is still not interactible)
+            if (H == null) { Owner = null; } //If no parent (owner), can be interacted again. This is very bad?
+            Collider2D[] C = GetComponents<Collider2D>();
+            for (int i = 0; i < C.Length; i++)
+            {
+                C[i].isTrigger = false;
+            }
+
         }
 
         private void OnTransformParentChanged()
