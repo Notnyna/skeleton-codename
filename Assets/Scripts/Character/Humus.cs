@@ -243,7 +243,9 @@ namespace Character
             if (HeldItem != null)
             {
                 HeldItem.gameObject.SetActive(true);
-                HeldItem.localPosition = ItemholdLocation;
+                addItemPos = new Vector2();
+                //HeldItem.localPosition = ItemholdLocation;
+                //if (DJ != null) { DJ.connectedBody=HeldItem.GetComponent<Rigidbody2D>(); }
                 //HeldItem.localPosition = ItemholdLocation;
             }
         }
@@ -291,9 +293,16 @@ namespace Character
             //if (!onGround) { RB.gravityScale = 1.4f; } else { RB.gravityScale = 1; }
         }
 
+        public Vector2 addItemPos;
+
         private void FixedUpdate()
         {
-            if (HeldItem != null) { HeldItem.GetComponent<Rigidbody2D>().MovePosition(ItemholdLocation+new Vector2(transform.position.x,transform.position.y)); }
+            if (HeldItem != null) {
+                //    DJ = new DistanceJoint2D(); DJ.connectedBody = HeldItem.GetComponent<Rigidbody2D>(); DJ.distance = 2;
+
+                HeldItem.GetComponent<Rigidbody2D>().MovePosition(ItemholdLocation+new Vector2(transform.position.x,transform.position.y) + addItemPos);
+
+            }
         }
 
     }

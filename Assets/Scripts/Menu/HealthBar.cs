@@ -6,11 +6,13 @@ namespace Menu
     {
         private Character.Health Target;
         private General.ListAnimation LS;
+        private Character.Inventory Inv;
 
         private void Start()
         {
             LS= GetComponent<General.ListAnimation>();
             if (LS == null) { Debug.Log("No list animation? Its the best we have!"); }
+
         }
 
         public void GetTarget(Transform T)

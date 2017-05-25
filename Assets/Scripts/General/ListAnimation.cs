@@ -70,30 +70,32 @@ namespace General
 
         }
 
-        public void PlayAnimation(int n, bool rep = false, bool force=false) {
-            if (force |( n < Animations.Length & AniIndex != n))
+        public bool PlayAnimation(int n, bool rep = false, bool force=false) {
+            if (force | (n < Animations.Length & AniIndex != n))
             {
-               // Debug.Log("Ani " + gameObject.name + " " + n);
+                // Debug.Log("Ani " + gameObject.name + " " + n);
                 string ani = Animations[n]; // Premade animation selected
-                
+
                 string[] anisprites = ani.Split(' ');
 
                 currentAni = new int[anisprites.Length];
                 F = anisprites.Length;
                 S = 0;
                 repeat = rep;
-                
+
                 for (int i = 0; i < F; i++)
                 {
-                    currentAni[i]=int.Parse(anisprites[i]);
-                    if (currentAni[i]>Sprites.Length) { Debug.Log("Incorrect sprite index found, check animations for " + gameObject.name); }
+                    currentAni[i] = int.Parse(anisprites[i]);
+                    if (currentAni[i] > Sprites.Length) { Debug.Log("Incorrect sprite index found, check animations for " + gameObject.name); }
                 }
 
                 C = 0; // Start animating from 0
                 AniIndex = n; // Current animation index
                 changeSprite();
                 //Debug.Log("Playing animation " + n + " in " + gameObject.name);
+                return true;
             }
+            return false;
         }
 
         public float currentAniTime() {
@@ -127,7 +129,7 @@ namespace General
         public void goIdle()
         {
             //repeat = false;
-            PlayAnimation(0);
+            PlayAnimation(0,true);
             //currentAni = null;
         }
 
@@ -144,8 +146,8 @@ namespace General
 
         private void Update()
         {
-            T = T - Time.deltaTime;
-            if (T < 0)
+            if (T > 0) { T = T - Time.deltaTime; }
+            else
             {
                 if (C < F) { changeSprite(); }
                 else

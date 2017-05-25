@@ -37,7 +37,7 @@ namespace General
 
         //Can make to play actual animations instead of vectors? wont need for now.
 
-        public void PlayAnimation(int n, bool rep = false, bool force = false)
+        public bool PlayAnimation(int n, bool rep = false, bool force = false)
         {
             if (force | (n < Animations.Length & AniIndex != n))
             {
@@ -78,8 +78,10 @@ namespace General
                 C = 0; // Start animating from 0
                 AniIndex = n; // Current animation index
                 nextMove();
+                return true;
                 //Debug.Log("Playing animation " + n + " in " + gameObject.name);
             }
+            return false;
         }
 
         public float currentAniTime()
@@ -97,14 +99,11 @@ namespace General
 
         public int currentAniPos() { return C; }
 
-        public void PlayAll()
-        {
-           // C = 0;
-            //S = 0;
-            //F = Animations.Length;
-            //changeSprite();
+        public Vector2 GetcurrentAni() {
+            if(currentAni==null) { return new Vector2(); }
+            return currentAni[C-1];
         }
-
+ 
         public void goIdle()
         {
             //repeat = false;
@@ -112,14 +111,15 @@ namespace General
             //currentAni = null;
         }
 
-        public void nextMove()
+        private void nextMove()
         {
             if (currentAni == null) { return; } 
             //RB.MovePosition(new Vector2(RB.position.x+currentAni[C].x,RB.position.y+currentAni[C].y));
             //RB.MoveRotation(currentAni[C].z);
             //RB.AddTorque(currentAni[C].z);
             RB.AddForce(currentAni[C],ForceMode2D.Impulse);
-            if (currentAni[C].z != 0) { mvRotate = currentAni[C].z; }
+            if (currentAni[C].z != 0) { mvRotate = currentAni[C].z; rotate = true; if (transform.lossyScale.x < 0) { mvRotate = -mvRotate; } }
+            else { rotate = false; }
             T = currentAni[C].w * timescale;  //Set time for how long to wait until next
             C++;
             //Debug.LogFormat("Changed To {0}", Sprites[to].name);
@@ -127,8 +127,8 @@ namespace General
 
         private void Update()
         {
-            T = T - Time.deltaTime;
-            if (T < 0)
+            if (T > 0) { T = T - Time.deltaTime; }
+            else
             {
                 if (C < F) { nextMove(); }
                 else
@@ -138,10 +138,20 @@ namespace General
                 }
             }
         }
+
+        Vector2 mvPosition;
+        bool move;
+        bool rotate;
         private float mvRotate;
         private void FixedUpdate()
         {
-            RB.MoveRotation(Mathf.Lerp(RB.rotation,mvRotate,Time.deltaTime/T));
+            //if (move) { }
+            if (rotate)
+            {
+                
+                //RB.MovePosition(Vector2.Lerp(currentAni[C-1], transform.position, Time.deltaTime / T));
+                RB.MoveRotation(Mathf.Lerp(RB.rotation, mvRotate, Time.deltaTime / T));
+            }
 
         }
 

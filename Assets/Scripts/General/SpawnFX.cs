@@ -18,11 +18,10 @@ namespace General
 
         public void DoFX(float direction, Vector2 spawnpoint, float dev,float sdev, int[] pref, int burst=1)
         {
-            int c = pref.Length;
 
             for (int i = 0; i < burst; i++)
             {
-                int di = Mathf.FloorToInt(Random.Range(0, c));
+                int di = Mathf.FloorToInt(Random.Range(0, pref.Length));
                 //Debug.Log(di +  " is " + pref[di] + "  count " + debriprefab.Count);
                 if (pref[di]>=debriprefab.Count) { Debug.Log("Cant find debri prefab " + pref[di]); return; }
                 SpawnDebri(pref[di],spawnpoint, Random.Range(direction-dev,direction+dev),Random.Range(debrispeed-sdev,debrispeed+sdev)); //Random.Range(debrispeed-dev,debrispeed+dev));
@@ -31,6 +30,7 @@ namespace General
 
         private void SpawnDebri(int i, Vector2 point, float dir, float speed)
         {
+            if (debriprefab[i] == null) { return; }
             float flip = 0;
             if (transform.lossyScale.x > 0) { flip = 180; }
             dir =(dir+flip)* Mathf.Deg2Rad;

@@ -8,6 +8,12 @@ namespace Character
     /// </summary>
     public class Inventory : MonoBehaviour
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="index"></param>
+        /// <param name="removed"></param>
         public delegate void InventoryChanged(Transform item, int index, bool removed);
         public event InventoryChanged OnChange;
 
@@ -90,7 +96,7 @@ namespace Character
             Transform[] I = GetInventory();
             if (i>=I.Length | i<0) { Debug.Log("Trying to hold too far " + i); i = 0; }
             currentselect = i;
-            if (OnChange != null) { OnChange(null,i, false); }
+            if (OnChange != null) { OnChange(null, i, false); }
             return I[i]; //Why on earth is it bad?
         }
 

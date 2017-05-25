@@ -3,18 +3,18 @@
 namespace General
 {
     /// <summary>
+    /// FX reserved for bullets: 0 - Fire, 1 2 - Travel, 3 - Destroy (hit)
     /// Interacts only with Health? maybe some other.
-    /// After dealing damage, it is destroyed. Not gameobject.
     /// How to handle when hitting multiple colliders belonging to the same health?
     /// </summary>
-    public class Damage : MonoBehaviour
+    public class BulletDamage : MonoBehaviour
     {
         public float Apierce = -1; //-1 means infinite
         public int Dmg = 1;
         private float primeTime; //Depends on 0 animation time
         public float lifetime = 1;
         public float punch=0;
-        public float FXspawn = 0.5f;
+        public float FXspawn = 0.5f; // Time for fx to spawn again
 
         //private Character.Health CH; //monitor to not deal continuous damage?
         private bool destroy;
@@ -30,7 +30,7 @@ namespace General
                 primeTime = LS.currentAniTime();
                 //Debug.Log(primeTime);
             }
-            if (FX != null)  //FX reserved for bullets: 0 - Fire, 1 2 - Travel, 3 - Destroy (hit)
+            if (FX != null)  
             {
                 FX.DoFX(transform.rotation.eulerAngles.z,transform.position,30,10,new int[] { 0 },3);
             }
@@ -63,8 +63,7 @@ namespace General
         {
             Character.Health h;
             if (cg.CompareTag("Player") && primeTime>0) { return; }
-            if (cg.CompareTag("Monster")) { h = cg.GetComponentInParent<Character.Health>(); }
-            else { h = cg.GetComponent<Character.Health>(); }
+            h = cg.GetComponentInParent<Character.Health>();
             //if (CH == h) { return; } //Maybe deal damage per frame ? Must save all targets though
             //if (CH == null) { CH = h; }
             if (h != null) {
@@ -77,7 +76,7 @@ namespace General
                 }
                 h.DealDamage(Dmg,point,transform.rotation.z);
             }
-            if (Apierce == 0)
+            if (Apierce < 1)
             {
                 Evaporate();
                 return;
@@ -89,7 +88,8 @@ namespace General
 
         private void Evaporate()
         {
-            if (LS != null)
+            if (Apierce < 0) { return; }
+            if (LS != null ) 
             {
                 LS.PlayAnimation(2,true); // 0 - fire, 1 - travel, 2 - destroy
                 primeTime = LS.currentAniTime();
@@ -121,7 +121,7 @@ namespace General
                 //}
                 lifetime -= Time.deltaTime;
             }
-            else { Evaporate(); }
+            else { if (!destroy) { Evaporate(); } }
 
             if (FX != null)
             {

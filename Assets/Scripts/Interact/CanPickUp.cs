@@ -39,8 +39,9 @@ namespace Interact
 
         private void OnEnable()
         {
-            Character.Humus H = GetComponentInParent<Character.Humus>();
-            if (H!=null && H != Owner) { H = Owner; return; } //If different parent (for whatever reason), he is now the owner!
+            Character.Humus H = GetComponentInParent<Character.Humus>(); // Just how far does it detect?
+            //Debug.Log(H.gameObject.name);
+            if (H !=null && H != Owner) { H = Owner; return; } //If different parent (for whatever reason), he is now the owner!
             if (H == Owner) { return; }            //If enabled and still belongs to owner, do nothing. (is still not interactible)
             if (H == null) { Owner = null; } //If no parent (owner), can be interacted again. This is very bad?
             Collider2D[] C = GetComponents<Collider2D>();

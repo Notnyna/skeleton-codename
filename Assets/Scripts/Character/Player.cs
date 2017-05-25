@@ -66,14 +66,23 @@ namespace Character
             if (H.HeldItem !=null) {
                 Item.Gun G = H.HeldItem.GetComponent<Item.Gun>();
                 if (G != null) { G.Fire(GetComponent<Rigidbody2D>().velocity); }
-
+                else
+                {
+                    Item.MeleeGun MG = H.HeldItem.GetComponent<Item.MeleeGun>();
+                    if (MG != null) { MG.Fire(); }
+                }
             } // I dont like this, I want it the other way around!
         }
 
-
         private bool allowflip=true;
+        //public bool allowaiming = true; //For melee weapons
         private void Update()
         {
+            if (Input.GetKeyDown(jumpkey)) { H.Jump(jumpforce);} 
+            if (Input.GetKeyDown(actionbutton)) { DoAction(); }
+            if (Input.GetKeyDown(dropkey)) { H.ReturnItem(); }
+            if (Input.GetMouseButton(0)) { DoButtonAction(); }
+            #region Movement and Aiming
             float axis = Input.GetAxis("Horizontal");
             if (axis != 0)
             {
@@ -84,33 +93,34 @@ namespace Character
                 }
                 else
                 {
-                    if (H.Move(moveforce * axis,allowflip)) { H.DoAnimation(1, true); }
+                    if (H.Move(moveforce * axis, allowflip)) { H.DoAnimation(1, true); }
                 }
             }
-            else {
-                running = false;
-                //if (Input.GetKeyDown(runbutton)) { aiming = true; H.DoAnimation(3, false, true); }  //How about implement full mouse aiming!?
-                //if (aiming)
-                //{
-                    
-                //}
-            } //endElse
-            if (!running)
+            else
             {
-                General.MoveAnimation Mv=null;
-                if (H.HeldItem != null) { Mv= H.HeldItem.GetComponent<General.MoveAnimation>(); } //This is pretty bad
-                if (((H.HeldItem != null && Mv!= null) && Mv.AniIndex < 1) | (H.HeldItem!=null && Mv==null)) //Bad? I dunno
+                running = false;
+            } //endElse
+
+            General.MoveAnimation MV = null;
+            if (H.HeldItem != null)
+            {
+                MV = H.HeldItem.GetComponent<General.MoveAnimation>(); //This is pretty bad - make it event dependent
+                if (MV != null && MV.AniIndex > 0) { return; }//allowaiming = false; } else { allowaiming = true; }
+
+                float torot = Menu.UsefulStuff.MouseToPointRotation(H.HeldItem.transform.position);
+
+                if (H.flip) //-90 to 90  When !flip 90 to -90(up)  When flip 270 to 90(up)
                 {
-                    float torot = Menu.UsefulStuff.MouseToPointRotation(H.HeldItem.transform.position);
-                    if (H.flip) //-90 to 90  When !flip 90 to -90(up)  When flip 270 to 90(up)
+                    torot += 180f;
+
+                    if (torot > 270f | torot < 90f)
                     {
-                        torot += 180f;
-                        if (torot>270f | torot<90f)
-                        {
-                            allowflip = false;
-                            H.HeldItem.rotation = Quaternion.Euler(0, 0, torot);
-                        }
-                        else
+                        allowflip = false;
+                        H.HeldItem.rotation = Quaternion.Euler(0, 0, torot);
+                    }
+                    else
+                    {
+                        if (!running)
                         {
                             allowflip = true;
                             H.Move(-1);
@@ -118,14 +128,17 @@ namespace Character
                             allowflip = false;
                         }
                     }
+                }
+                else
+                {
+                    if (Mathf.Abs(torot) < 90f)
+                    {
+                        allowflip = false;
+                        H.HeldItem.rotation = Quaternion.Euler(0, 0, torot); 
+                    }
                     else
                     {
-                        if (Mathf.Abs(torot) < 90f)
-                        {
-                            allowflip = false;
-                            H.HeldItem.rotation = Quaternion.Euler(0, 0, torot);
-                        }
-                        else
+                        if (!running)
                         {
                             allowflip = true;
                             //Debug.Log("Unflippin out");
@@ -134,17 +147,17 @@ namespace Character
                         }
                     }
                 }
-                else { allowflip = true;  }
             }
-            else {
-                if (H.HeldItem != null) { H.HeldItem.rotation = Quaternion.Euler(0, 0, 0); }
-            }
-            if (Input.GetKeyDown(jumpkey)) { H.Jump(jumpforce);} 
-            if (Input.GetKeyDown(actionbutton)) { DoAction(); }
-            if (Input.GetKeyDown(dropkey)) { H.ReturnItem(); }
+            else { allowflip = true; }
+
+            //else
+            // {
+            //    if (H.HeldItem != null) { }//H.HeldItem.rotation = Quaternion.Euler(0, 0, 0); }
+            //}
+            #endregion
+
             if (Input.GetKeyDown("q")) { H.HoldNextItem(true); }
             if (Input.GetKeyDown("e")) { H.HoldNextItem(); }
-            if (Input.GetMouseButton(0)) { DoButtonAction(); }
         }
 
     }

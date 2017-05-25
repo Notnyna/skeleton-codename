@@ -27,9 +27,10 @@ namespace Item
         private bool canfire;
         public float fireforce = 10;
         General.ListAnimation LS;
-
+        General.MoveAnimation MV;
         private void Start()
         {
+            MV = GetComponent<General.MoveAnimation>();
             LS = GetComponent<General.ListAnimation>();
             if (Bullet == null) { Debug.Log("Shooting nothing!"); }
             cclip = clip;
@@ -50,14 +51,15 @@ namespace Item
             Rigidbody2D brb=b.GetComponent<Rigidbody2D>();
 
             if (transform.lossyScale.x < 0) { b.transform.localScale = new Vector2(-b.transform.localScale.x, b.transform.localScale.y); }
-            //Debug.Log(GetComponent<Rigidbody2D>().velocity.ToString());
+            //Debug.Log(transform.parent.GetComponentInParent<Rigidbody2D>().velocity.ToString());
             brb.AddForce(
-                (Boff * fireforce) + v
-                ,ForceMode2D.Impulse);
+                (Boff * fireforce) + v*brb.mass 
+                , ForceMode2D.Impulse);
 
             cclip--;
             firing = true;
             counter = cooldown;
+            if (autoreload) { rcounter = reloadtime; }
             canfire = false;
             FireAni();
         }
@@ -73,7 +75,7 @@ namespace Item
             }
         }
 
-        public void FireAni()
+        private void FireAni()
         {
             if (LS==null) { return; }
             LS.PlayAnimation(1);
@@ -85,7 +87,7 @@ namespace Item
             else {
                 if (cclip+i <= clip)
                 {
-                    cclip += i;  rcounter = reloadtime;
+                    cclip += i;  rcounter = reloadtime; canfire = false;
                 }
             }
             
@@ -110,6 +112,7 @@ namespace Item
             else {
                 if (!firing & autoreload) { Reload(1); }
             }
+
             ReloadAni();
             
         }
@@ -118,10 +121,23 @@ namespace Item
         {
             counter = 0;
             if (autoreload) { Reload(4); }
-            General.MoveAnimation Mv = GetComponent<General.MoveAnimation>();
-            if (Mv != null && GetComponentInParent<Character.Humus>() !=null) {
-                Mv.PlayAnimation(1);
-                counter = Mv.currentAniTime();
+            DoEquipAni();
+        }
+
+        public int GetAmmo()
+        {
+            return cclip;
+        }
+
+        private void DoEquipAni()
+        {
+            if (MV == null) { return; }
+            //Character.Player P = GetComponentInParent<Character.Player>();
+            Character.Humus H = GetComponentInParent<Character.Humus>();
+            if (H.HeldItem==transform) //Only player can do animations for now
+            {
+                MV.PlayAnimation(1);
+                counter = MV.currentAniTime();
                 canfire = false;
             }
         }
