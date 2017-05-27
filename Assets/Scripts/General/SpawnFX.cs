@@ -21,7 +21,7 @@ namespace General
 
             for (int i = 0; i < burst; i++)
             {
-                int di = Mathf.FloorToInt(Random.Range(0, pref.Length));
+                int di = Random.Range(0, pref.Length);
                 //Debug.Log(di +  " is " + pref[di] + "  count " + debriprefab.Count);
                 if (pref[di]>=debriprefab.Count) { Debug.Log("Cant find debri prefab " + pref[di]); return; }
                 SpawnDebri(pref[di],spawnpoint, Random.Range(direction-dev,direction+dev),Random.Range(debrispeed-sdev,debrispeed+sdev)); //Random.Range(debrispeed-dev,debrispeed+dev));

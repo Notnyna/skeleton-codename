@@ -82,6 +82,7 @@ namespace Character
             if (Input.GetKeyDown(actionbutton)) { DoAction(); }
             if (Input.GetKeyDown(dropkey)) { H.ReturnItem(); }
             if (Input.GetMouseButton(0)) { DoButtonAction(); }
+
             #region Movement and Aiming
             float axis = Input.GetAxis("Horizontal");
             if (axis != 0)
@@ -104,49 +105,63 @@ namespace Character
             General.MoveAnimation MV = null;
             if (H.HeldItem != null)
             {
+                
                 MV = H.HeldItem.GetComponent<General.MoveAnimation>(); //This is pretty bad - make it event dependent
                 if (MV != null && MV.AniIndex > 0) { return; }//allowaiming = false; } else { allowaiming = true; }
 
                 float torot = Menu.UsefulStuff.MouseToPointRotation(H.HeldItem.transform.position);
-
-                if (H.flip) //-90 to 90  When !flip 90 to -90(up)  When flip 270 to 90(up)
+                //FOR torot -90 to 90  When !flip 90 to -90(up)  When flip 270 to 90(up)
+                float htorot = Menu.UsefulStuff.MouseToPointRotation(transform.position);
+                //FOR htorot !flip -90(up) 90(down) | flip -90(up) -180to90(down)
+                //Debug.Log(htorot);
+                //torot += 180f;
+                if (H.HeldItem.GetComponent<Rigidbody2D>() == null) { torot=0; }
+                if (H.flip)
                 {
-                    torot += 180f;
-
-                    if (torot > 270f | torot < 90f)
+                    if (Mathf.Abs(htorot) > 90)
+                    {
+                        allowflip = false;
+                        H.HeldItem.rotation = Quaternion.Euler(0, 0, torot + 180);
+                    }
+                    else
+                    {
+                        if (H.flip)
+                        {
+                            if (!running)
+                            {
+                                allowflip = true;
+                                H.Move(-1);
+                                //Debug.Log("Flippin out");
+                                allowflip = false;
+                            }
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    if (Mathf.Abs(htorot) < 90)
                     {
                         allowflip = false;
                         H.HeldItem.rotation = Quaternion.Euler(0, 0, torot);
                     }
                     else
                     {
-                        if (!running)
+                        if (!H.flip)
                         {
-                            allowflip = true;
-                            H.Move(-1);
-                            //Debug.Log("Flippin out");
-                            allowflip = false;
+                            if (!running)
+                            {
+                                allowflip = true;
+                                //Debug.Log("Unflippin out");
+                                H.Move(1);
+                                allowflip = false;
+                            }
                         }
                     }
+                    
                 }
-                else
-                {
-                    if (Mathf.Abs(torot) < 90f)
-                    {
-                        allowflip = false;
-                        H.HeldItem.rotation = Quaternion.Euler(0, 0, torot); 
-                    }
-                    else
-                    {
-                        if (!running)
-                        {
-                            allowflip = true;
-                            //Debug.Log("Unflippin out");
-                            H.Move(1);
-                            allowflip = false;
-                        }
-                    }
-                }
+
+               
             }
             else { allowflip = true; }
 
@@ -156,7 +171,7 @@ namespace Character
             //}
             #endregion
 
-            if (Input.GetKeyDown("q")) { H.HoldNextItem(true); }
+            if (Input.GetKeyDown("q")) { H.HoldNextItem(true); } // Make animations cut short to allow control
             if (Input.GetKeyDown("e")) { H.HoldNextItem(); }
         }
 

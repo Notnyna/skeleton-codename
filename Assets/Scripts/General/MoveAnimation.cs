@@ -21,6 +21,7 @@ namespace General
 
         public bool Animate;
 
+
         int S, F, C; //Start Finish Current
         float T; // Time on going for current sprite
 
@@ -30,7 +31,7 @@ namespace General
         {
             if (Animations==null) { Destroy(this); }
             RB = GetComponent<Rigidbody2D>();
-            if (RB == null) { Debug.Log("Cant move animation without rigidbody yet, sorry!"); }
+            //if (RB == null) { Debug.Log("Cant move animation without rigidbody yet, sorry!"); }
 
             if (Animate) { PlayAnimation(AniIndex, true, true); }
         }
@@ -113,14 +114,26 @@ namespace General
 
         private void nextMove()
         {
-            if (currentAni == null) { return; } 
+            if (currentAni == null) { return; }
             //RB.MovePosition(new Vector2(RB.position.x+currentAni[C].x,RB.position.y+currentAni[C].y));
             //RB.MoveRotation(currentAni[C].z);
             //RB.AddTorque(currentAni[C].z);
-            RB.AddForce(currentAni[C],ForceMode2D.Impulse);
-            if (currentAni[C].z != 0) { mvRotate = currentAni[C].z; rotate = true; if (transform.lossyScale.x < 0) { mvRotate = -mvRotate; } }
+           // if (RB != null) { RB.AddForce(currentAni[C], ForceMode2D.Impulse); }
+            if (currentAni[C].z != 0) {
+                mvRotate = currentAni[C].z;
+                rotate = true;
+                if (transform.lossyScale.x < 0) { mvRotate = -mvRotate; }
+            }
             else { rotate = false; }
+
+            //if (currentAni[C].x != 0 | currentAni[C].y != 0) {
+            //    mvPosition = new Vector2(currentAni[C].x,currentAni[C].y);
+                //mvPosition = new Vector2(transform.position.x+currentAni[C].x,transform.position.y+ currentAni[C].y);
+            //    move = true;
+           // }
+            //else { move = false; }
             T = currentAni[C].w * timescale;  //Set time for how long to wait until next
+            //If w is 0, make the changes instant!
             C++;
             //Debug.LogFormat("Changed To {0}", Sprites[to].name);
         }
@@ -139,18 +152,33 @@ namespace General
             }
         }
 
-        Vector2 mvPosition;
-        bool move;
+        //Vector2 mvPosition;
+        //bool move;
         bool rotate;
         private float mvRotate;
         private void FixedUpdate()
         {
-            //if (move) { }
+            // Ok, here's what, for best results it has to only add the position data until end of time. Nothing works yet.
+           // if (move) { //DOES NOTHING OK, ITS ALL A SHOW, ITS A SHOW AND YOU'VE BEEN  L I E D  TO
+            //    if (RB != null) {
+                    //RB.AddForce(mvPosition, ForceMode2D.Impulse);
+                    //RB.MovePosition(Vector2.Lerp(transform.position, mvPosition, Time.deltaTime / T));
+                    //transform.localPosition = new Vector3(mvPosition.x , mvPosition.y , transform.position.z);
+                    //transform.position += new Vector3(mvPosition.x/ currentAni[C-1].w * timescale, mvPosition.y/ currentAni[C-1].w * timescale);
+            //    }
+            //    else  {
+                    //transform.localPosition = new Vector3(mvPosition.x / transform.lossyScale.x, mvPosition.y/transform.lossyScale.y, transform.position.z); 
+                    //Meh.
+                    //Vector2.Lerp(transform.position,mvPosition, Time.deltaTime / T); 
+             //   }
+           // }
+
             if (rotate)
             {
-                
-                //RB.MovePosition(Vector2.Lerp(currentAni[C-1], transform.position, Time.deltaTime / T));
-                RB.MoveRotation(Mathf.Lerp(RB.rotation, mvRotate, Time.deltaTime / T));
+                if (RB != null) { RB.MoveRotation(Mathf.LerpAngle(RB.rotation, mvRotate, Time.deltaTime / T)); }
+                else {
+                    transform.rotation=Quaternion.Lerp(transform.rotation,Quaternion.Euler(0,0,mvRotate),Time.deltaTime/T);
+                }
             }
 
         }

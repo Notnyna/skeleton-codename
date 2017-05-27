@@ -100,5 +100,10 @@ namespace Character
             return I[i]; //Why on earth is it bad?
         }
 
+        private void OnDestroy()
+        {
+            //Eject all items into the air!
+        }
+
     }
 }

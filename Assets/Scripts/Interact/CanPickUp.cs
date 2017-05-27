@@ -6,7 +6,7 @@ namespace Interact
     {
         public Character.Humus Owner;
         //private bool interactflag = false;
-        public Vector2 HoldOver = new Vector2();
+        //public Vector2 HoldOver = new Vector2();
 
         private void Start()
         {

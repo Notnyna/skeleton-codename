@@ -55,12 +55,17 @@ namespace Item
             brb.AddForce(
                 (Boff * fireforce) + v*brb.mass 
                 , ForceMode2D.Impulse);
+            //brb.MoveRotation(Menu.UsefulStuff.FromVectorToRotation((Boff * fireforce) + v * brb.mass));
+            //brb.MoveRotation(Menu.UsefulStuff.FromVectorToRotation(brb.velocity));
+            
 
             cclip--;
             firing = true;
             counter = cooldown;
-            if (autoreload) { rcounter = reloadtime; }
+            //if (autoreload) { rcounter = reloadtime; }
             canfire = false;
+            Rigidbody2D PRB = transform.parent.GetComponentInParent<Rigidbody2D>();
+            if (PRB != null) { PRB.AddForce(-Boff*fireforce,ForceMode2D.Impulse); }
             FireAni();
         }
 
@@ -83,14 +88,14 @@ namespace Item
 
         public void Reload(int i=-1)
         {
-            if (i < 0) { cclip = clip; counter = reloadtime; canfire = false; }
+            if (i < 0) { cclip = clip;canfire = false; }
             else {
                 if (cclip+i <= clip)
                 {
-                    cclip += i;  rcounter = reloadtime; canfire = false;
+                    cclip += i;   canfire = false;
                 }
             }
-            
+            rcounter = reloadtime;
         }
 
         private bool firing;

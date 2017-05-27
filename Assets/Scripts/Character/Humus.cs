@@ -69,6 +69,7 @@ namespace Character
             if (force < 0 & flip) {
                 //if (SR == null) {
                     transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, 1);
+                ItemholdLocation.x = -ItemholdLocation.x;
                 //}
                 //else SR.flipX = true;
                 flip = false;
@@ -76,6 +77,7 @@ namespace Character
             if (force > 0 & !flip) {
                 //if (SR == null) {
                     transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, 1);
+                ItemholdLocation.x = Mathf.Abs(ItemholdLocation.x);
                 //}
                 //else  SR.flipX = false;
                 flip = true;
@@ -193,9 +195,9 @@ namespace Character
         {
             if (Inv == null) { return false; }
             if (!Inv.TakeItem(item)) { return false; }
-            item.localPosition = ItemholdLocation;
-            Vector3 iscale = item.transform.localScale;
-            item.transform.localScale = new Vector3(Mathf.Abs(iscale.x),iscale.y,1);
+            //item.localPosition = ItemholdLocation;
+            item.transform.localScale = new Vector3(1,1,1);
+            //item.localPosition = ItemholdLocation/transform.localScale.x;
             //Debug.Log(iscale.ToString());
             //if ((flip & iscale.x > 0) | (!flip & iscale.x < 0)) { iscale = new Vector3(-iscale.x, iscale.y, 1); Debug.Log("flipping item"); } 
             HoldItem(Inv.currentselect);
@@ -242,11 +244,9 @@ namespace Character
             HeldItem = holdnew;
             if (HeldItem != null)
             {
-                HeldItem.gameObject.SetActive(true);
                 addItemPos = new Vector2();
-                //HeldItem.localPosition = ItemholdLocation;
-                //if (DJ != null) { DJ.connectedBody=HeldItem.GetComponent<Rigidbody2D>(); }
-                //HeldItem.localPosition = ItemholdLocation;
+                HeldItem.localPosition = ItemholdLocation / transform.localScale.x;
+                HeldItem.gameObject.SetActive(true);
             }
         }
 
@@ -259,7 +259,7 @@ namespace Character
 
         private void OnTriggerStay2D(Collider2D collision)
         {
-            if (!collision.CompareTag("Detection"))
+            if (!collision.CompareTag("Detection") && !collision.isTrigger)
             {
                 if (!onGround & !stopMove) { onGround = true; cjumps = 0; suspendMove(0.1f); }
             }
@@ -269,12 +269,12 @@ namespace Character
         private void OnTriggerEnter2D(Collider2D collision)
         {
             // Can jump only if trigger enters, not anything else
-            if (!CompareTag("Detection")) { Triggers.Add(collision.transform); }
+            if (!CompareTag("Detection") && !collision.isTrigger) { Triggers.Add(collision.transform); }
         }
 
         private void OnTriggerExit2D(Collider2D collision)
         {
-            if (!CompareTag("Detection")) { Triggers.Remove(collision.transform); }
+            if (!CompareTag("Detection") && !collision.isTrigger) { Triggers.Remove(collision.transform); }
             if (Triggers.Count == 0)  { onGround = false; }
         }
 
@@ -292,16 +292,22 @@ namespace Character
 
             //if (!onGround) { RB.gravityScale = 1.4f; } else { RB.gravityScale = 1; }
         }
-
+        
         public Vector2 addItemPos;
-
+        
         private void FixedUpdate()
         {
             if (HeldItem != null) {
-                //    DJ = new DistanceJoint2D(); DJ.connectedBody = HeldItem.GetComponent<Rigidbody2D>(); DJ.distance = 2;
-
-                HeldItem.GetComponent<Rigidbody2D>().MovePosition(ItemholdLocation+new Vector2(transform.position.x,transform.position.y) + addItemPos);
-
+                Rigidbody2D HRB = HeldItem.GetComponent<Rigidbody2D>(); //Should make global in class
+                if (HRB != null) {
+                    HRB.MovePosition(ItemholdLocation + new Vector2(transform.position.x, transform.position.y) + addItemPos);
+                }
+                //if (!HeldItem.gameObject.activeSelf) { HeldItem.gameObject.SetActive(true); }
+                else
+                {
+                    HeldItem.transform.localPosition = ItemholdLocation;
+                    // Should not be item in the first place really.
+                }
             }
         }
 

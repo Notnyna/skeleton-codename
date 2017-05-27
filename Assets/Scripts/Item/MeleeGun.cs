@@ -21,8 +21,8 @@ namespace Item
         //General.ListAnimation LS;
         //Rigidbody2D RB;
         public Character.Humus CH;
-        bool active;
-        List<Transform> Dzones;
+        public bool active;
+        List<Collider2D> Dzones; //Kinda useless now, change to only one transform
         int cattack=2; //Start counting from 2 (equip is not attack ani)
         bool sendtoH; //For changing Humus
 
@@ -31,20 +31,30 @@ namespace Item
             MV = GetComponent<General.MoveAnimation>();
             //LS = GetComponent<General.ListAnimation>();
             //RB = GetComponent<Rigidbody2D>();
-            Dzones = new List<Transform>();
+            Dzones = new List<Collider2D>();
             foreach (Transform c in transform)
             {
-                Dzones.Add(c);
+                Collider2D[] ct = c.GetComponents<Collider2D>();
+                if (ct != null) {
+                    for (int i = 0; i < ct.Length; i++)
+                    {
+                        if (ct[i].isTrigger) { Dzones.Add(ct[i]); }
+                    }
+                    
+                }
+                
             }
+            if (Dzones.Count == 0) { Debug.Log("No dangerzones?!"); }
             //GetComponentInChildren<Collider2D>();
         }
 
         private void DisableAttacks(bool enable = false)
         {
             if (Dzones == null) { return; }
-            foreach (Transform d in Dzones)
+            foreach (Collider2D cd in Dzones)
             {
-                d.gameObject.SetActive(enable);
+                cd.enabled = false;
+                //d.gameObject.SetActive(enable);
             }
 
         }
@@ -53,10 +63,10 @@ namespace Item
         {
             if (Dzones.Count > cattack-2)
             {
-                Dzones[cattack - 2].gameObject.SetActive(true);
+                Dzones[cattack - 2].enabled = true; 
             }
             else {
-                Dzones[0].gameObject.SetActive(true);
+                Dzones[0].enabled = true;
             }
         }
 
@@ -77,14 +87,15 @@ namespace Item
             }
             if (cattack == 4) {
                 Gun G = GetComponent<Gun>();
-                if (G != null) { G.enabled = true;
-                    G.Fire();
+                if (G != null) {
+                    G.enabled = true;
+                    G.Fire(); //Test
                     G.enabled= false;
                     }
                 }
 
             cattack++;
-            sendtoH = true;
+            if (CH != null) { sendtoH = true; }
         }
 
         void OnEnable()
@@ -117,31 +128,37 @@ namespace Item
         {
             if (active)
             {
-                
                 if (count > 0)
                 {
                     count -= Time.deltaTime;
                 }
-                else { CH.addItemPos = new Vector2(); sendtoH = false; DisableAttacks(); }
+                else {
+                    CH.addItemPos = new Vector2();
+                    sendtoH = false;
+                    DisableAttacks();
+                }
             }
         }
-
+        
         private void FixedUpdate()
         {
             if (sendtoH) {
                 //Vector2 Pt = CH.GetComponent<Rigidbody2D>().position;
+                if (CH == null) { return; }
                 Vector2 mv = MV.GetcurrentAni();
                 if (transform.lossyScale.x < 0) { mv = new Vector2(-mv.x,mv.y); }
                 //Vector2 M = Vector2.Lerp(Vector2.zero,mv, Time.deltaTime/count);
-                CH.addItemPos = mv;//MV.GetcurrentAni(); 
+                CH.addItemPos = mv;
             }
         }
+        
 
         private void DoEquipAni()
         {
             if (MV == null) { return; }
             //Character.Player P = CH.GetComponent<Character.Player>();
             //Character.Humus H = P.GetComponent<Character.Humus>();
+            if (CH == null) { return; }
             if (CH.HeldItem == transform) //Only player can do animations for now
             {
                 MV.PlayAnimation(1);

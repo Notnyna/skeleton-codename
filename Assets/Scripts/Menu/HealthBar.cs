@@ -5,13 +5,15 @@ namespace Menu
     public class HealthBar : MonoBehaviour
     {
         private Character.Health Target;
-        private General.ListAnimation LS;
+        //private General.ListAnimation LS;
         private Character.Inventory Inv;
+        private General.Extender EX;
 
         private void Start()
         {
-            LS= GetComponent<General.ListAnimation>();
-            if (LS == null) { Debug.Log("No list animation? Its the best we have!"); }
+            //LS= GetComponent<General.ListAnimation>();
+            //if (LS == null) { Debug.Log("No list animation? Its the best we have!"); }
+            EX = GetComponentInChildren<General.Extender>();
 
         }
 
@@ -27,10 +29,12 @@ namespace Menu
 
         private void Target_HpChanged()
         {
-            int hp = Target.HP;
-            if (hp > 3) { hp = 3; } //Simple, who need more ??
-            if (hp < 1) { hp = 1; }
-            LS.PlayAnimation(4-hp,true,true);
+            float hp = Target.GetPercentHP();
+
+            //int hp = Target.HP;
+            //if (hp > 3) { hp = 3; } //Simple, who need more ??
+            //if (hp < 1) { hp = 1; }
+            //LS.PlayAnimation(4-hp,true,true);
         }
     }
 }

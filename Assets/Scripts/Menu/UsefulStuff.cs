@@ -36,7 +36,7 @@ namespace Menu
         {
             Vector2 MPx = Input.mousePosition; 
             Vector2 MP = Camera.main.ScreenToWorldPoint(new Vector3(MPx.x,MPx.y,Mathf.Abs(Camera.main.transform.position.z)));
-            Debug.DrawLine(fromPoint,MP,Color.blue,100);
+            //Debug.DrawLine(fromPoint,MP,Color.blue,100);
             return fromPoint-MP;
         }
 

@@ -49,6 +49,7 @@ namespace General
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
+            if (collision.isTrigger) { return; }
             //Debug.Log("Trigger! " + collision.name);
             if (destroy) { return; }
             //if (collision.transform == transform.parent) { return; }
@@ -63,19 +64,24 @@ namespace General
         {
             Character.Health h;
             if (cg.CompareTag("Player") && primeTime>0) { return; }
-            h = cg.GetComponentInParent<Character.Health>();
-            //if (CH == h) { return; } //Maybe deal damage per frame ? Must save all targets though
-            //if (CH == null) { CH = h; }
-            if (h != null) {
-                if (punch != 0) {
-                    //Rigidbody2D rb = GetComponent<Rigidbody2D>();
-                    bool flip = false; ;
-                    if (transform.lossyScale.x < 0) { flip = true; }
-                    h.GetComponent<Rigidbody2D>().AddForceAtPosition(Menu.UsefulStuff.FromRotationToVector(transform.rotation.eulerAngles.z,flip).normalized*-punch,cg.position, ForceMode2D.Impulse);
 
-                }
-                h.DealDamage(Dmg,point,transform.rotation.z);
+            h = cg.GetComponent<Character.Health>();
+            if (h == null) { return; }
+
+            if (punch != 0) {
+                //Rigidbody2D rb = GetComponent<Rigidbody2D>();
+                float f = 1 ;
+                bool flip=false;
+                if (transform.lossyScale.x < 0) { f=-1; flip = true; }
+                //Replace with health punch
+                h.GetComponent<Rigidbody2D>().AddForceAtPosition(
+                    Menu.UsefulStuff.FromRotationToVector(transform.rotation.eulerAngles.z,flip).normalized*
+                    -punch,cg.position
+                    , ForceMode2D.Impulse);
             }
+
+            h.DealDamage(Dmg,point,transform.rotation.z);
+
             if (Apierce < 1)
             {
                 Evaporate();
