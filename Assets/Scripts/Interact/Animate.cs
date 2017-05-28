@@ -22,12 +22,35 @@ namespace Interact
         private void I_OnInteract(Transform who)
         {
             if (repeatani) {
-                if (LS.AniIndex == startani) { LS.PlayAnimation(endani,true); } else { LS.PlayAnimation(startani,true); }
+                if (LS.AniIndex == endani | who==transform) {
+                    LS.PlayAnimation(startani,true);
+                    foreach (Transform c in transform)
+                    {
+                        c.gameObject.SetActive(false);
+                    }
+                } else {
+                    LS.PlayAnimation(endani, true);
+                    foreach (Transform c in transform)
+                    {
+                        c.gameObject.SetActive(true);
+                    }
+                }
                 return;
             }
             if (increaseani) {
                 LS.PlayAnimation(LS.AniIndex+1);
             }
+            foreach (Transform c in transform)
+            {
+                c.gameObject.SetActive(true);
+            }
+        }
+
+        float count;
+        public float autoani;
+        private void Update()
+        {
+            if (count > 0) { count -= Time.deltaTime; } else { if (autoani > 0) { count = autoani; I_OnInteract(transform); } }
         }
 
         private void OnDestroy()

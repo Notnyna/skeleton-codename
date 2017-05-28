@@ -21,6 +21,8 @@ namespace Item
         public float reloadtime;
         public float cooldown;
         public bool autoreload;
+        //public int ammo; //The total bullets you can shoot, including all clips
+        //public int maxammo;
 
         private int cclip; //current clip
         private float counter;
@@ -28,12 +30,13 @@ namespace Item
         public float fireforce = 10;
         General.ListAnimation LS;
         General.MoveAnimation MV;
+
         private void Start()
         {
             MV = GetComponent<General.MoveAnimation>();
             LS = GetComponent<General.ListAnimation>();
             if (Bullet == null) { Debug.Log("Shooting nothing!"); }
-            cclip = clip;
+            //if (ammo > 0) { Reload(); }
         }
 
         public void Fire(Vector2 v=new Vector2())//float direction) Should implement rotation if dont want to fire only according to gun
@@ -45,18 +48,24 @@ namespace Item
             bool flip=false;
             if (transform.lossyScale.x > 0) { flip = true; }
             Vector2 Boff = Menu.UsefulStuff.FromRotationToVector(transform.rotation.eulerAngles.z,flip);
-            b.transform.position = new Vector3(transform.position.x+Boff.x*bulletoffset, transform.position.y+Boff.y*bulletoffset,1);
+            b.transform.position = new Vector3(transform.position.x+Boff.x*bulletoffset, transform.position.y+Boff.y*bulletoffset,transform.position.z);
             b.transform.rotation = transform.rotation;
 
             Rigidbody2D brb=b.GetComponent<Rigidbody2D>();
 
             if (transform.lossyScale.x < 0) { b.transform.localScale = new Vector2(-b.transform.localScale.x, b.transform.localScale.y); }
-            //Debug.Log(transform.parent.GetComponentInParent<Rigidbody2D>().velocity.ToString());
-            brb.AddForce(
-                (Boff * fireforce) + v*brb.mass 
+
+            Rigidbody2D pRB = transform.parent.GetComponentInParent<Rigidbody2D>();//kinda strict and bad?
+            Vector2 add = Vector2.zero;
+             if (pRB != null) {
+
+                add = pRB.velocity * brb.mass/2;
+                pRB.AddForce(-Boff * fireforce, ForceMode2D.Impulse);
+            }
+
+            brb.AddForce( //Add impulse to bullet!
+                (Boff * fireforce) +add
                 , ForceMode2D.Impulse);
-            //brb.MoveRotation(Menu.UsefulStuff.FromVectorToRotation((Boff * fireforce) + v * brb.mass));
-            //brb.MoveRotation(Menu.UsefulStuff.FromVectorToRotation(brb.velocity));
             
 
             cclip--;
@@ -64,8 +73,6 @@ namespace Item
             counter = cooldown;
             //if (autoreload) { rcounter = reloadtime; }
             canfire = false;
-            Rigidbody2D PRB = transform.parent.GetComponentInParent<Rigidbody2D>();
-            if (PRB != null) { PRB.AddForce(-Boff*fireforce,ForceMode2D.Impulse); }
             FireAni();
         }
 
@@ -125,13 +132,13 @@ namespace Item
         private void OnEnable()
         {
             counter = 0;
-            if (autoreload) { Reload(4); }
+            if (autoreload) { Reload(2); }
             DoEquipAni();
         }
 
-        public int GetAmmo()
+        public int GetAmmoPercent()
         {
-            return cclip;
+            return Mathf.FloorToInt(((float)cclip / (float)clip) * 100f);
         }
 
         private void DoEquipAni()
@@ -139,7 +146,7 @@ namespace Item
             if (MV == null) { return; }
             //Character.Player P = GetComponentInParent<Character.Player>();
             Character.Humus H = GetComponentInParent<Character.Humus>();
-            if (H.HeldItem==transform) //Only player can do animations for now
+            if (H!=null && H.HeldItem==transform) //Only player can do animations for now
             {
                 MV.PlayAnimation(1);
                 counter = MV.currentAniTime();

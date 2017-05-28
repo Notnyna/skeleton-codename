@@ -21,13 +21,13 @@ namespace Character.AI
 
         private void Start()
         {
-            MG = GetComponentInChildren<Item.MeleeGun>();
-            if (MG == null) { G= GetComponentInChildren<Item.Gun>(); }
+            MG = GetComponent<Item.MeleeGun>();
+            if (MG == null) { G= GetComponent<Item.Gun>(); }
         }
 
         public void ConditionCheck()
         {
-            if (AIB == null) { return; }
+            if (AIB == null) { return; } //Maybe fire with no control?
             if (!AIB.hostile) { return; }
 
             float d = AIB.CalculateTarget();
@@ -50,6 +50,16 @@ namespace Character.AI
         public void Eject()
         {
             AIB = null;
+        }
+        bool halved;
+        public void HalfPower()
+        {
+            if (!halved)
+            {
+                if (MG != null) { MG.GetComponent<General.MoveAnimation>().timescale *= 1.5f; }
+                else if (G != null) { G.cooldown *= 2; }
+                halved = true;
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Character.AI
     {
         //Maybe add something here like knockback stabilization or something.
         public AIBase AIB;
+        public bool halfpower;
         public void ConditionCheck()
         {
             return;
@@ -20,6 +21,11 @@ namespace Character.AI
         public bool Execute()
         {
             return false;
+        }
+
+        public void HalfPower()
+        {
+            halfpower = true; 
         }
 
         public void SetAIB(AIBase aib)

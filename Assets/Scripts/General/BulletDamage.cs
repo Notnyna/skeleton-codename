@@ -20,6 +20,7 @@ namespace General
         private bool destroy;
         ListAnimation LS;
         SpawnFX FX;
+        SpriteRenderer SR;
 
         private void Start()
         {
@@ -34,6 +35,9 @@ namespace General
             {
                 FX.DoFX(transform.rotation.eulerAngles.z,transform.position,30,10,new int[] { 0 },3);
             }
+            SR=GetComponent<SpriteRenderer>();
+            SR.sortingOrder=Random.Range(-5,6);
+
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -41,10 +45,10 @@ namespace General
             if (destroy) { return; }
             //if (collision.transform == transform) { return; }
             Transform cg = collision.transform;
-            if (cg.CompareTag("Monster") | cg.CompareTag("Player") | cg.CompareTag("Ground"))
-            {
+            //if (cg.CompareTag("Monster") | cg.CompareTag("Player") | cg.CompareTag("Ground"))
+           // {
                 DoDamage(cg, collision.transform.position); //maybe just put the bullet position?
-            }
+            //}
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
@@ -54,10 +58,10 @@ namespace General
             if (destroy) { return; }
             //if (collision.transform == transform.parent) { return; }
             Transform cg = collision.transform;
-            if (cg.CompareTag("Monster") | cg.CompareTag("Player") | cg.CompareTag("Ground"))
-            {
+            //if (cg.CompareTag("Monster") | cg.CompareTag("Player") | cg.CompareTag("Ground"))
+            //{
                 DoDamage(cg,collision.transform.position);
-            }
+            //}
         }
 
         private void DoDamage(Transform cg, Vector2 point)
@@ -66,9 +70,14 @@ namespace General
             if (cg.CompareTag("Player") && primeTime>0) { return; }
 
             h = cg.GetComponent<Character.Health>();
-            if (h == null) { return; }
+            bool pierce = true;
+            if (h != null) {
+                float f = -1;
+                if (transform.lossyScale.x < 0) { f = 1; }
+                pierce =h.DealDamage(Dmg, transform.position, transform.rotation.z,punch*f);
+            }
 
-            if (punch != 0) {
+            /*if (punch != 0) {
                 //Rigidbody2D rb = GetComponent<Rigidbody2D>();
                 float f = 1 ;
                 bool flip=false;
@@ -78,11 +87,11 @@ namespace General
                     Menu.UsefulStuff.FromRotationToVector(transform.rotation.eulerAngles.z,flip).normalized*
                     -punch,cg.position
                     , ForceMode2D.Impulse);
-            }
+            }*/
 
-            h.DealDamage(Dmg,point,transform.rotation.z);
+            
 
-            if (Apierce < 1)
+            if (!pierce | Apierce < 1)
             {
                 Evaporate();
                 return;
@@ -125,6 +134,7 @@ namespace General
                 //    
                 //    FXspawn = FXspawn / (FXspawn - 1);
                 //}
+                if (Random.Range(0, 3) == 0) { Miss(); }
                 lifetime -= Time.deltaTime;
             }
             else { if (!destroy) { Evaporate(); } }
@@ -137,6 +147,12 @@ namespace General
                     fxcount = 0;
                 }
             }
+        }
+
+        void Miss()
+        {
+            if (gameObject.layer == 2) { gameObject.layer = 0; }
+            else { gameObject.layer = 2; } 
         }
 
     }

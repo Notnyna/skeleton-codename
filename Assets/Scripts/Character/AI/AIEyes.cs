@@ -1,11 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Character.AI
 {
     /// <summary>
     /// Gets and updates Target info on trigger collisions.
-    /// Bullets too.
+    /// Bullets too. Optionially.
     /// The head can be talked to when the body is dead, usually.
     /// </summary>
     public class AIEyes : MonoBehaviour, AIFunc
@@ -23,15 +22,17 @@ namespace Character.AI
         private void OnTriggerStay2D(Collider2D collision)
         {
             if (!collision.CompareTag("Player")) { return; }
+            //if (collision.GetComponent<Health>().GetPercentHP() < 20) { See = null; return; }
             if (See == collision.transform) { count = blindtime; return; }
             See = collision.transform;
             count = blindtime;
+           
         }
 
 
         public void ConditionCheck()
         {
-            AIB.SwitchTargets(See, true);
+            if (AIB != null) { AIB.SwitchTargets(See, true); }
         }
 
         private void Update()
@@ -48,8 +49,14 @@ namespace Character.AI
 
         public void Eject()
         {
-            if (!AIB.hostile) { AIB.hostile = true; } 
+            if (!AIB.hostile) { AIB.hostile = true; }
+            AIB.SwitchTargets(null,false);
             AIB = null;
+        }
+
+        public void HalfPower()
+        {
+            if (blindtime > 1f) { blindtime *= 0.5f; }
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Item
         //Rigidbody2D RB;
         public Character.Humus CH;
         public bool active;
-        List<Collider2D> Dzones; //Kinda useless now, change to only one transform
+        List<Collider2D> Dzones; 
         int cattack=2; //Start counting from 2 (equip is not attack ani)
         bool sendtoH; //For changing Humus
 
@@ -44,23 +44,25 @@ namespace Item
                 }
                 
             }
-            if (Dzones.Count == 0) { Debug.Log("No dangerzones?!"); }
+            if (Dzones.Count == 0) { Debug.Log("No dangerzones?!"); Dzones = null; }
+            if (!active) { DisableAttacks(); }
             //GetComponentInChildren<Collider2D>();
         }
 
         private void DisableAttacks(bool enable = false)
         {
             if (Dzones == null) { return; }
-            foreach (Collider2D cd in Dzones)
+            for (int i = 0; i < Dzones.Count; i++)
             {
-                cd.enabled = false;
-                //d.gameObject.SetActive(enable);
+                Dzones[i].enabled = enable;
             }
-
+            //if ( active) { Dzones[0].enabled = true; return; }
         }
 
         private void EnableAttack()
         {
+            if (Dzones == null) { return; }
+            //if (active) { Dzones[0].enabled = false; }
             if (Dzones.Count > cattack-2)
             {
                 Dzones[cattack - 2].enabled = true; 
@@ -147,8 +149,8 @@ namespace Item
                 if (CH == null) { return; }
                 Vector2 mv = MV.GetcurrentAni();
                 if (transform.lossyScale.x < 0) { mv = new Vector2(-mv.x,mv.y); }
-                //Vector2 M = Vector2.Lerp(Vector2.zero,mv, Time.deltaTime/count);
-                CH.addItemPos = mv;
+                //Vector2 M = Vector2.Lerp(Vector2.zero,mv, Time.deltaTime/count); Menu.UsefulStuff.FromRotationToVector(transform.rotation.z,false)
+                CH.addItemPos = mv  ;
             }
         }
         

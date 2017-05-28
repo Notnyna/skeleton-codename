@@ -48,7 +48,7 @@ namespace Scenario
         {
             if (Target != null)
             {
-                if (!focused & Mathf.Abs((Target.position.x - transform.position.x)) < 0.05f)
+                if (!focused & Mathf.Abs((Target.position.x - transform.position.x)) < 0.1f)
                 {
                     FocusCamera(true);
                 }

@@ -255,6 +255,16 @@ namespace Character
             if (Inv == null) { return -1; }
             return Inv.currentselect;
         }
+
+        public void DropAll()
+        {
+            if (Inv == null) { return; }
+            for (int i = 0; i < Inv.maxitems; i++)
+            {
+                Inv.ReturnItem(i);
+            }
+            HeldItem = null;
+        }
         #endregion
 
         private void OnTriggerStay2D(Collider2D collision)
@@ -300,7 +310,8 @@ namespace Character
             if (HeldItem != null) {
                 Rigidbody2D HRB = HeldItem.GetComponent<Rigidbody2D>(); //Should make global in class
                 if (HRB != null) {
-                    HRB.MovePosition(ItemholdLocation + new Vector2(transform.position.x, transform.position.y) + addItemPos);
+                    HRB.MovePosition(ItemholdLocation + new Vector2(transform.position.x, transform.position.y) + addItemPos
+                        );
                 }
                 //if (!HeldItem.gameObject.activeSelf) { HeldItem.gameObject.SetActive(true); }
                 else

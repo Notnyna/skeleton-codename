@@ -86,7 +86,7 @@ namespace General
                 for (int i = 0; i < F; i++)
                 {
                     currentAni[i] = int.Parse(anisprites[i]);
-                    if (currentAni[i] > Sprites.Length) { Debug.Log("Incorrect sprite index found, check animations for " + gameObject.name); }
+                    if (currentAni[i] > Sprites.Length) { Debug.Log("Incorrect sprite index found, check " + gameObject.name + " for " + anisprites[i]); }
                 }
 
                 C = 0; // Start animating from 0

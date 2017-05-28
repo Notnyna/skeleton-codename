@@ -7,9 +7,11 @@ namespace Interact
         public Character.Humus Owner;
         //private bool interactflag = false;
         //public Vector2 HoldOver = new Vector2();
+        Rigidbody2D RB;
 
         private void Start()
         {
+            RB = GetComponent<Rigidbody2D>();
             Interactible I = GetComponent<Interactible>();
             if (I != null) { I.OnInteract += I_OnInteract; }
         }
@@ -26,7 +28,9 @@ namespace Interact
             //Debug.Log("Giving if possible!");
             if (Owner == null && Owner!=H) {
                 if (H.TakeItem(this.transform)) {
+                    GetComponent<SpriteRenderer>().sortingOrder = H.GetComponent<SpriteRenderer>().sortingOrder+1;
                     Owner = H;
+                    if (RB != null && !RB.simulated) { RB.simulated = true; }
                     Collider2D[] C = GetComponents<Collider2D>();
                     for (int i = 0; i < C.Length; i++)
                     {

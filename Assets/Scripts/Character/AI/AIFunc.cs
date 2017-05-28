@@ -8,5 +8,6 @@ namespace Character.AI
         void ConditionCheck();
         bool Execute();
         void Eject();
+        void HalfPower();
     }
 }

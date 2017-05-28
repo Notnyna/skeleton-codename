@@ -22,8 +22,8 @@ namespace General
             for (int i = 0; i < burst; i++)
             {
                 int di = Random.Range(0, pref.Length);
-                //Debug.Log(di +  " is " + pref[di] + "  count " + debriprefab.Count);
-                if (pref[di]>=debriprefab.Count) { Debug.Log("Cant find debri prefab " + pref[di]); return; }
+                //Debug.Log(di +  " is " + pref[di] + "  count " + debriprefab.Count); Debug.Log("Cant find debri prefab " + pref[di]); 
+                if (pref[di]>=debriprefab.Count) {return; }
                 SpawnDebri(pref[di],spawnpoint, Random.Range(direction-dev,direction+dev),Random.Range(debrispeed-sdev,debrispeed+sdev)); //Random.Range(debrispeed-dev,debrispeed+dev));
             }
         }
@@ -31,15 +31,19 @@ namespace General
         private void SpawnDebri(int i, Vector2 point, float dir, float speed)
         {
             if (debriprefab[i] == null) { return; }
-            float flip = 0;
-            if (transform.lossyScale.x > 0) { flip = 180; }
-            dir =(dir+flip)* Mathf.Deg2Rad;
+            dir =(dir)* Mathf.Deg2Rad;
             GameObject d = Instantiate(debriprefab[i]);
             d.transform.position = point;
+            d.GetComponent<SpriteRenderer>().sortingOrder = Random.Range(-1,6);
             Rigidbody2D drb = d.GetComponent<Rigidbody2D>();
             if (drb != null)
             {
-                drb.AddForce(new Vector2(Mathf.Cos(dir),Mathf.Sin(dir))*speed,ForceMode2D.Impulse);
+                Vector2 add = Vector2.zero;
+                Rigidbody2D pRB = transform.GetComponent<Rigidbody2D>();
+                if (pRB != null) { add = pRB.velocity; }
+
+                drb.AddTorque(Random.Range(-60,60));
+                drb.AddForce(new Vector2(Mathf.Cos(dir),Mathf.Sin(dir))*speed+add,ForceMode2D.Impulse);
             }
         }
 

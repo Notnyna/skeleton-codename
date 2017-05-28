@@ -27,10 +27,9 @@ namespace Menu
             }
         }
 
-        private void Target_HpChanged()
+        private void Target_HpChanged(Character.Health who)
         {
-            float hp = Target.GetPercentHP();
-
+            EX.ExtendPercent(Target.GetPercentHP());
             //int hp = Target.HP;
             //if (hp > 3) { hp = 3; } //Simple, who need more ??
             //if (hp < 1) { hp = 1; }

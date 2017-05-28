@@ -12,16 +12,18 @@ namespace Character
         public event ActivateItem OnActivate;
 
         public float moveforce = 10f;
+        public float bleedmove= 10f;
         public float jumpforce = 10f;
         public string jumpkey = "w";
         public string actionbutton = "f";
         public string runbutton = "s";
         public string dropkey = "g";
-
+        public bool available;
         private bool running;
 
         //public bool action { private set; get; }
         private Humus H;
+        private Health HP;
         private Menu.MenuManager MM; //For calling inventory when picking up items
 
         private void Awake()
@@ -32,7 +34,46 @@ namespace Character
             if (MM == null) { Debug.Log("Cant find menu manager :("); }
             Inventory Inv = H.GetComponentInChildren<Inventory>(); 
             if (Inv != null) { Inv.OnChange += CallInventory; } else { Debug.Log("No inv :("); }
+            HP = GetComponent<Health>();
+            HP.OnDeath += Death;
+            HP.HpChanged += HP_HpChanged;
 
+        }
+
+        bool slow;
+        private void HP_HpChanged(Health who)
+        {
+            if (who.Dying())
+            {
+                if (!slow)
+                {
+                    float t = moveforce;
+                    moveforce = bleedmove;
+                    bleedmove = t;
+                    slow = true;
+                }
+            }
+            else {
+                if (slow)
+                {
+                    float t = moveforce;
+                    moveforce = bleedmove;
+                    bleedmove = t;
+                    slow = false;
+                }
+            }
+
+            //if (who.GetPercentHP() > 20) { available = true; }
+        }
+
+        private void Death(Health who)
+        {
+            available = false;
+            H.DropAll();
+            Menu.GameMaster GM = FindObjectOfType<Menu.GameMaster>();
+            if (enabled) { GM.SwitchPlayer(); }
+
+            if (enabled) { Debug.Log("Game over!!"); enabled = false; }
         }
 
         private void CallInventory(Transform item, int index, bool removed)
@@ -82,7 +123,8 @@ namespace Character
             if (Input.GetKeyDown(actionbutton)) { DoAction(); }
             if (Input.GetKeyDown(dropkey)) { H.ReturnItem(); }
             if (Input.GetMouseButton(0)) { DoButtonAction(); }
-
+            if (Input.GetKeyDown("q")) { H.HoldNextItem(true); } 
+            if (Input.GetKeyDown("e")) { H.HoldNextItem(); }
             #region Movement and Aiming
             float axis = Input.GetAxis("Horizontal");
             if (axis != 0)
@@ -171,8 +213,7 @@ namespace Character
             //}
             #endregion
 
-            if (Input.GetKeyDown("q")) { H.HoldNextItem(true); } // Make animations cut short to allow control
-            if (Input.GetKeyDown("e")) { H.HoldNextItem(); }
+
         }
 
     }

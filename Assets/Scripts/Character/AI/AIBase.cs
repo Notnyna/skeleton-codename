@@ -12,22 +12,30 @@ namespace Character.AI
     public class AIBase : MonoBehaviour
     {
         Humus H;
-        Rigidbody2D RB;
+        //Rigidbody2D RB;
         Transform Target; //Only one target per AIbase
         public bool flip = false;
         public float moveforce;
         public float jumpforce; 
         public bool hostile;
         List<AIFunc> AIF; //List of ai functions (in children only for now!)
+        Health HP;
+        //General.SpawnFX SX;
+        bool insane;
 
-        General.SpawnFX SX;
-
-        private void Start()
+        private void Awake()
         {
             AIF = new List<AIFunc>(GetComponentsInChildren<AIFunc>()); // Module list
-            SX = GetComponent<General.SpawnFX>();
+            //SX = GetComponent<General.SpawnFX>();
             H = GetComponent<Humus>();
-            RB = GetComponent<Rigidbody2D>();
+            //RB = GetComponent<Rigidbody2D>();
+            HP = GetComponent<Health>();
+            if (!HP.Global) { Debug.Log("AIBase uses a global health!"); }
+            HP.HpChanged += MainHpChanged;
+            HP.OnDeath += KillAI;
+            HP.OnPartDeath += OnPartDeath;
+            //HP.OnBleedout += OnPartBleed; //Maybe also implement OnPartHeal?!
+
             if (flip) {
                 H.Move(0.1f);
             }
@@ -37,9 +45,40 @@ namespace Character.AI
             }
         }
 
+        private void MainHpChanged(Health who)
+        {
+            if (who.GetPercentHP() > 95) { return; }
+            hostile = true;
+            if (Target != null) { return; }
+            foreach (AIFunc aif in AIF)
+            {
+                aif.Execute();
+            }
+        }
+
+        private void OnPartBleed(Transform who)
+        {
+            AIFunc w =who.GetComponent<AIFunc>();
+            if (w != null) { w.HalfPower(); }
+        }
+
+        private void OnPartDeath(Transform who)
+        {
+            Eject(who);
+            if (who.GetComponent<AIEyes>()) { insane = true; }
+        }
+
+        private void KillAI(Health who)
+        {
+            HP.OnDeath -= KillAI;
+            HP.OnPartDeath -= OnPartDeath;
+            Eject(null,true);
+        }
+
         public void Move(float mult)
         {
             if (moveforce == 0) { return; }
+            //Debug.Log(mult);
             if (H.Move(moveforce*mult))
             {
                 H.DoAnimation(1);
@@ -60,32 +99,32 @@ namespace Character.AI
             return distancex;
         }
 
-        public void Eject(Transform child)
+        public void Eject(Transform child, bool death=false) // On death eject all modules. Destroy this gameObject
         {
-            foreach (Transform c in transform)
+            foreach (Transform c in transform) //Maybe useless check?!
             {
-                if (child == c)
+                if (child == c | death)
                 {
-                    if (c is AIFunc)
-                    {
-                        c.GetComponent<AIFunc>().Eject();
-                        AIF.Remove(c.GetComponent<AIFunc>());
-                    }
+                    AIFunc cai = c.GetComponent<AIFunc>();
+                    if (cai != null) { cai.Eject(); AIF.Remove(cai); }
                     Ejection(c);
                 }
             }
+            if (death) { this.death=death; H.DropAll(); }
         }
 
         private void Ejection(Transform c) //Launch and propel the module out of existance. (Don't actually) (Ok maybe just a little)
         {
             Rigidbody2D crb = c.GetComponent<Rigidbody2D>();
-            c.gameObject.layer = 8; //To debrisFX layer
+            General.MoveAnimation cMV = c.GetComponent<General.MoveAnimation>();
+            if (cMV != null) { Destroy(cMV); }
+            //if (Random.Range(0, 2) == 0) { c.gameObject.layer = 8; }//To debrisFX layer
             c.parent = null;
-            if (SX != null) {
-                
-            }
-            //Would be nice to move each component from the explosion.
-            //Too lazy to do everything by physics joints (and so I wont)
+            if(crb ==null) { crb=c.gameObject.AddComponent<Rigidbody2D>(); }
+            crb.gravityScale = 5;
+            crb.mass = 50;
+            crb.drag = 2;
+            crb.AddForce(new Vector2(0,1000),ForceMode2D.Impulse); 
         }
 
         public void SwitchTargets(Transform t, bool dc)
@@ -109,8 +148,15 @@ namespace Character.AI
 
         public bool NoTarget() { if (Target == null) { return true; } else return false; }
 
+        bool death;
+        float dtime=0.2f; //Deathtime
         private void Update()
         {
+            if (death)
+            {
+                if (dtime > 0) { dtime -= Time.deltaTime; } else { Destroy(gameObject); }
+            }
+            
             //For use with Spawning FX, not much else.
         }
 
@@ -120,6 +166,7 @@ namespace Character.AI
             foreach (AIFunc aif in AIF)
             {
                 aif.ConditionCheck();
+                if (insane) { aif.Execute(); }
             }
         }
 

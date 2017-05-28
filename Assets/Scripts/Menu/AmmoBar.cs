@@ -23,8 +23,8 @@ namespace Menu
 
         void CheckAmmo()
         {
-            int percent = Mathf.FloorToInt(((float)G.GetAmmo()/(float)G.clip)*100f);
-            EX.ExtendPercent(percent);
+            //int percent = Mathf.FloorToInt(((float)G.GetAmmo()/(float)G.clip)*100f);
+            EX.ExtendPercent(G.GetAmmoPercent());
         }
 
         private void Update()

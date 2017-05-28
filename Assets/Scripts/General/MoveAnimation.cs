@@ -183,5 +183,12 @@ namespace General
 
         }
 
+        private void OnDisable()
+        {
+            rotate = false;
+            mvRotate = 0;
+            PlayAnimation(0);
+        }
+
     }
 }

@@ -6,10 +6,11 @@ namespace Item
     {
         public float punch=10;
         public int damage=1;
+        public bool knockbackowner = true;
         MeleeGun MG;
         private void Start()
         {
-            MG= GetComponentInParent<MeleeGun>();
+            MG = GetComponentInParent<MeleeGun>();
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
@@ -28,16 +29,24 @@ namespace Item
             
             Character.Health h;
             h = collision.GetComponent<Character.Health>();
-            if (h == null) { return; }
-            if (punch != 0)
+            if (h != null)
             {
                 float f = -1;
-                //Rigidbody2D rb = GetComponent<Rigidbody2D>();
                 if (transform.lossyScale.x < 0) { f = 1; }
-                h.DealDamage(damage, collision.transform.position, transform.rotation.z);
-                //Do punch (health)
+                h.DealDamage(damage, collision.transform.position, f, punch*f);
+
+                if (knockbackowner)
+                {
+                    if (MG != null && MG.CH != null)
+                    {
+                        Rigidbody2D pRB = MG.CH.GetComponent<Rigidbody2D>();
+                        if (pRB != null)
+                        {
+                            pRB.AddForce(new Vector2((punch * -f) / 2, 0), ForceMode2D.Impulse);
+                        }
+                    }
+                }
             }
-           // if (FX != null) { FX.DoFX(transform.rotation.eulerAngles.z, transform.position, 10, 3, new int[] { 3 }, 1); }
         }
     }
 }

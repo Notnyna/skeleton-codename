@@ -34,6 +34,14 @@ namespace Menu
             CameraT.SwitchTarget(Players[currentPlayer].transform);
         }
 
+        public void SwitchPlayer()
+        {
+            foreach (Character.Player p in Players)
+            {
+                if (p.available) { SwitchPlayer(Players.IndexOf(p)); break; }
+            }
+        }
+
         public void DisableControls()
         {
             Players[currentPlayer].enabled = false;
