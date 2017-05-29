@@ -69,10 +69,18 @@ namespace Menu
             transform.position = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.y);
         }
 
+        float count0 = 2;
         private void Update()
         {
             //if (Input.GetKeyDown(KeyCode.Escape)) { NoMenu(); }
             if (Input.GetKeyDown(openinv)) { ChangeMenu(2); }
+
+            if (Input.GetKey(KeyCode.Escape) & !Menus[1].gameObject.activeSelf)
+            {
+                if (count0 > 0) { count0 -= Time.deltaTime; } else { Application.Quit(); }
+                Debug.Log("Counting! " +count0);
+            }
+            else count0 = 2;
         }
 
     }

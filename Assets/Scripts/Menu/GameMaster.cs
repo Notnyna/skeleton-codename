@@ -33,14 +33,14 @@ namespace Menu
             Players[currentPlayer].enabled = false;
             Players[player].enabled = true;
             currentPlayer = player;
-            CameraT.SwitchTarget(Players[currentPlayer].transform);
+            drama = true;
         }
 
         public void SwitchPlayer()
         {
             foreach (Character.Player p in Players)
             {
-                if (p.available) { SwitchPlayer(Players.IndexOf(p)); break; }
+                if (p.available) { SwitchPlayer(Players.IndexOf(p)); count1 = 2f; drama = true; break; }
             }
         }
 
@@ -65,13 +65,23 @@ namespace Menu
         }
         bool drama;
         float count0 = 0;
+        float count1 = 2;
         private void Update()
         {
             if (drama)
             {
                 if (count0 > 0) { count0 -= Time.deltaTime; }
-                else { SwitchPlayer(currentPlayer); drama = false; }
-            }       
+                else { SwitchPlayer(currentPlayer);
+                    if (count1 > 0) { count1 -= Time.deltaTime; }
+                    else
+                    {
+                        CameraT.SwitchTarget(Players[currentPlayer].transform);
+                        drama = false;
+                    }
+                }
+
+            }
+
         }
 
     }

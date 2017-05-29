@@ -39,7 +39,7 @@ namespace Item
                 if (transform.lossyScale.x > 0) { f = true; } 
                 Vector2 dirup = Menu.UsefulStuff.FromRotationToVector(transform.rotation.eulerAngles.z, f); //only for up vector?
 
-                Vector2 direction = new Vector2(transform.position.x- collision.transform.position.x,dirup.y*5);
+                Vector2 direction = new Vector2(transform.position.x- collision.transform.position.x,dirup.y*8);
                 h.DealDamage(damage, collision.transform.position, -direction, punch);
 
                 if (knockbackowner)
