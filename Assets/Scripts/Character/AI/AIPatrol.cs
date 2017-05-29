@@ -16,6 +16,8 @@ namespace Character.AI
         private float half;
         public float stoprange=5f;
 
+        public bool goforward=false;
+
         public void SetAIB(AIBase aib)
         {
             AIB = aib;
@@ -28,17 +30,37 @@ namespace Character.AI
             if (AIB == null) { return; }
             if (AIB.hostile)
             {
-                if (AIB.NoTarget()) {
+                bool notarget = AIB.NoTarget();
+                if (notarget)
+                {
                     //Patrol around angrily with short breaks if no Target
-                    MoveRandom(btinterv/2);
+                    if (!goforward) { MoveRandom(btinterv / 2); }
+                    else {
+                        MoveForward();
+                    }
                     return;
-                } else MoveTarget();
+                }
+                else MoveTarget();
                 //If Target is around, go towards him.
             }
-            else {
-                //Stay in place 
-                if (patrol) { MoveRandom(btinterv); }
+            else
+            {
+                //Stay in place unless patro
+                if (patrol) {
+                    MoveRandom(btinterv);
+                }
+                
             }
+        }
+
+        private void MoveForward()
+        {
+            float d = 1;
+            if (transform.lossyScale.x > 0) { d = -1; }
+            mm = ((1 / (float)dlegs) * LG.Count - half)*d;
+
+            AIB.Move(mm);
+            //if (Mathf.Abs(d) < stoprange) { mm = 0; }
         }
 
         private void MoveRandom(float time)
@@ -61,6 +83,8 @@ namespace Character.AI
             float d = AIB.CalculateTarget();
             if (d > 0) { mm = (1 / (float)dlegs) * LG.Count - half; } else { mm = -((1 / (float)dlegs) * LG.Count - half); }
             if (Mathf.Abs(d)<stoprange) { mm = 0; }
+            AIB.Move(mm);
+            goforward = false;
         }
 
 

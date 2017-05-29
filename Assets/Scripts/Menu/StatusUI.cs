@@ -56,7 +56,13 @@ namespace Menu
             //I wonder why and where is it worth checking, becoming delirious
             HPBar.GetComponent<HealthBar>().GetTarget(T);
             //ABar.GetComponent<AmmoBar>().GetTarget(T);
-            Inv = T.GetComponent<Character.Humus>().GetComponentInChildren<Character.Inventory>();
+            Character.Humus H = T.GetComponent<Character.Humus>();
+            if (H == null) {
+                ABar.SetActive(false);
+                Inv = null;
+                return;
+            }
+            Inv = H.GetComponentInChildren<Character.Inventory>();
             if (Inv != null) { Inv.OnChange += Inv_OnChange; }
         }
 

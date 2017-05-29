@@ -21,9 +21,10 @@ namespace Item
         public float reloadtime;
         public float cooldown;
         public bool autoreload;
+        public bool equipanimate=true;
         //public int ammo; //The total bullets you can shoot, including all clips
         //public int maxammo;
-
+        public bool knockbackowner=true;
         private int cclip; //current clip
         private float counter;
         private bool canfire;
@@ -60,11 +61,11 @@ namespace Item
              if (pRB != null) {
 
                 add = pRB.velocity * brb.mass/2;
-                pRB.AddForce(-Boff * fireforce, ForceMode2D.Impulse);
+                if (knockbackowner) { pRB.AddForce(-Boff * fireforce, ForceMode2D.Impulse); }
             }
 
-            brb.AddForce( //Add impulse to bullet!
-                (Boff * fireforce) +add
+            brb.AddForce( //Add impulse to bullet! Note its only half velocity
+                (Boff * fireforce) + add
                 , ForceMode2D.Impulse);
             
 
@@ -144,6 +145,7 @@ namespace Item
         private void DoEquipAni()
         {
             if (MV == null) { return; }
+            if (!equipanimate) { return; }
             //Character.Player P = GetComponentInParent<Character.Player>();
             Character.Humus H = GetComponentInParent<Character.Humus>();
             if (H!=null && H.HeldItem==transform) //Only player can do animations for now

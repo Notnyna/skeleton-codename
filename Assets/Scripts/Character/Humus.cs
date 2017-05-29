@@ -40,6 +40,7 @@ namespace Character
             //bodyparts = new List<Transform>();
             //inventory = new List<Transform>();
             RB = GetComponent<Rigidbody2D>();
+            //normalmass = RB.mass;
             //SR = GetComponent<SpriteRenderer>();
             LS = GetComponent<General.ListAnimation>();
             Inv = GetComponentInChildren<Inventory>();
@@ -54,16 +55,15 @@ namespace Character
             {
                 if (Mathf.Abs(RB.velocity.x) < Mathf.Abs(force))
                 {
-                    RB.AddForce(new Vector2(force * 2, 0), ForceMode2D.Impulse);
+                    
+                    RB.AddForce(new Vector2(force*2, 0), ForceMode2D.Impulse);
                 }
-                //RB.velocity = new Vector2(force, RB.velocity.y);
             }
             else {
                 if (Mathf.Abs(RB.velocity.x) < Mathf.Abs(force))
                 {
                     RB.AddForce(new Vector2(force*4, 0), ForceMode2D.Impulse);
                 }
-                //RB.velocity = new Vector2(force, 0);
             }
             if (!allowflip) { return true; }
             if (force < 0 & flip) {
@@ -267,12 +267,14 @@ namespace Character
         }
         #endregion
 
+        //private float normalmass;
         private void OnTriggerStay2D(Collider2D collision)
         {
             if (!collision.CompareTag("Detection") && !collision.isTrigger)
             {
-                if (!onGround & !stopMove) { onGround = true; cjumps = 0; suspendMove(0.1f); }
+                if (!onGround & !stopMove) { onGround = true; cjumps = 0; suspendMove(0.1f);  }
             }
+
         }
 
         private List<Transform> Triggers = new List<Transform>();
@@ -290,6 +292,8 @@ namespace Character
 
         private void Update()
         {
+
+
             if (stopMove)
             {
                 if (counter > 0)
@@ -307,6 +311,16 @@ namespace Character
         
         private void FixedUpdate()
         {
+            /*bool onsomtin = false;
+            bool onimmov = false;
+            foreach (Transform ob in Triggers)
+            {
+                if (!ob.CompareTag("Ground")) { onimmov = true; }
+                else { onsomtin = true; }
+            }
+            if (onsomtin & !onimmov) { RB.mass = 1; }
+            else { RB.mass = normalmass; }*/
+
             if (HeldItem != null) {
                 Rigidbody2D HRB = HeldItem.GetComponent<Rigidbody2D>(); //Should make global in class
                 if (HRB != null) {

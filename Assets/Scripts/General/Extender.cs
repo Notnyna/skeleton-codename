@@ -16,19 +16,35 @@ namespace General
         private float count;
         //private bool waiting;
         private int waiting;
+        public bool EndisPrefab = true;
+        public int minext=0;
 
         private void Start()
         {
-            if (extensionEnd != null) {
+            if (EndisPrefab && extensionEnd != null)
+            {
                 extensionEnd = Instantiate(extensionEnd,transform);
                 PositionExtEnd();
             }
-            EXTN = new List<Transform>();
+            else { PositionExtEnd(); }
+            EXTN = new List<Transform>(maxext);
+            if (extensionPrefab == null) {
+                Debug.Log("No extension prefab?" + gameObject.name); }
+
+            for (int i = 1; i < maxext+1; i++)
+            {
+                CreateExt(i);
+            }
+            cext = maxext-1;
+            ExtendPercent(0);
+            //waiting=minext;
         }
 
         private void PositionExtEnd()
         {
             if (extensionEnd == null) { return; }
+            //if (Vector2.Distance(extensionEnd.transform.localPosition, extendV * cext) >1) {
+            //    extensionEnd = null; return; }
             extensionEnd.transform.localPosition = extendV * (cext + 1);
         }
 
@@ -37,21 +53,25 @@ namespace General
             //if (waiting == 0) { return; }
             if (cext < maxext)
             {
-                cext++;
-                CreateExt(cext);
+                //CreateExt(cext);
+                if (cext < maxext - 1) { cext++; }
+                EXTN[cext].gameObject.SetActive(true);
                 PositionExtEnd();
-                waiting--;
+                
             }
+            waiting--;
         }
 
         private void Contract()
         {
             //if (waiting > 0) { waiting = 0; }
-            if (cext > 0) {
-                cext--;
-                Destroy(EXTN[cext].gameObject);
-                EXTN.RemoveAt(cext);
+            if (cext> minext) {
+                
+                //Destroy(EXTN[cext].gameObject);
+                //EXTN.RemoveAt(cext);
+                EXTN[cext].gameObject.SetActive(false);
                 PositionExtEnd();
+                if (cext > minext) { cext--; }
             }
             waiting++;
         }
@@ -61,6 +81,7 @@ namespace General
             GameObject e = Instantiate(extensionPrefab,transform);
             e.transform.localPosition = extendV * omult;
             EXTN.Add(e.transform);
+            //if (destroy) { e.AddComponent<TimedDestroy>(); }
         }
 
         public void ExtendPercent(int percent)
@@ -78,6 +99,17 @@ namespace General
         private void Update()
         {
             if (count > 0) { count -= Time.deltaTime; } else { Choose(); }
+        }
+
+        //bool destroy = false;
+        private void OnDestroy()
+        {
+            waiting = 0;
+            //destroy = true;
+            //foreach (Transform e in GetComponentInChildren<Transform>())
+            //{
+                //e.gameObject.AddComponent<TimedDestroy>();
+            //}
         }
     }
 }

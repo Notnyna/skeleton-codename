@@ -54,7 +54,7 @@ namespace Menu
                     //Hardcoding is bad DYNAMIC HARDCODE EVERYTHING
             P.transform.localPosition = UsefulStuff.CalculateScreenPosition(new Vector2(65,-70));
             TextM.transform.localPosition = UsefulStuff.CalculateScreenPosition(new Vector2(-90,-45));
-            DisablePlayer();
+            //DisablePlayer();
         }
 
         private void DisablePlayer(bool enable=false)

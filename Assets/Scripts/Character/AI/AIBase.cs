@@ -47,7 +47,7 @@ namespace Character.AI
 
         private void MainHpChanged(Health who)
         {
-            if (who.GetPercentHP() > 95) { return; }
+            if (who.GetPercentHP() > 99) { return; }
             hostile = true;
             if (Target != null) { return; }
             foreach (AIFunc aif in AIF)
@@ -101,13 +101,14 @@ namespace Character.AI
 
         public void Eject(Transform child, bool death=false) // On death eject all modules. Destroy this gameObject
         {
-            foreach (Transform c in transform) //Maybe useless check?!
+            foreach (Transform c in GetComponentsInChildren<Transform>()) //Maybe useless check?!
             {
                 if (child == c | death)
                 {
                     AIFunc cai = c.GetComponent<AIFunc>();
-                    if (cai != null) { cai.Eject(); AIF.Remove(cai); }
+                    if (cai != null) { cai.Eject(); AIF.Remove(cai);  }
                     Ejection(c);
+                    if (!death) { break; }
                 }
             }
             if (death) { this.death=death; H.DropAll(); }
@@ -115,6 +116,7 @@ namespace Character.AI
 
         private void Ejection(Transform c) //Launch and propel the module out of existance. (Don't actually) (Ok maybe just a little)
         {
+            if (c.CompareTag("Monster")==false) { return; }
             Rigidbody2D crb = c.GetComponent<Rigidbody2D>();
             General.MoveAnimation cMV = c.GetComponent<General.MoveAnimation>();
             if (cMV != null) { Destroy(cMV); }
@@ -122,9 +124,9 @@ namespace Character.AI
             c.parent = null;
             if(crb ==null) { crb=c.gameObject.AddComponent<Rigidbody2D>(); }
             crb.gravityScale = 5;
-            crb.mass = 50;
+            crb.mass = 10;
             crb.drag = 2;
-            crb.AddForce(new Vector2(0,1000),ForceMode2D.Impulse); 
+            crb.AddForce(new Vector2(0,300),ForceMode2D.Impulse); 
         }
 
         public void SwitchTargets(Transform t, bool dc)
@@ -146,7 +148,12 @@ namespace Character.AI
             }
         }
 
-        public bool NoTarget() { if (Target == null) { return true; } else return false; }
+        public bool NoTarget() {
+            //if (Target != null) { Debug.Log("Target is" + Target.name); }
+            //else { Debug.Log("No target!"); }
+            if (Target == null) { return true; }
+            return false;
+        }
 
         bool death;
         float dtime=0.2f; //Deathtime
@@ -165,8 +172,8 @@ namespace Character.AI
             //float dist = CalculateTarget();
             foreach (AIFunc aif in AIF)
             {
-                aif.ConditionCheck();
-                if (insane) { aif.Execute(); }
+                
+                if (insane) { aif.Execute(); } else { aif.ConditionCheck(); }
             }
         }
 

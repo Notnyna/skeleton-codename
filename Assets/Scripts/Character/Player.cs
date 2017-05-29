@@ -68,6 +68,8 @@ namespace Character
 
         private void Death(Health who)
         {
+            H.DoAnimation(5,false,true); // Death ani
+
             available = false;
             H.DropAll();
             Menu.GameMaster GM = FindObjectOfType<Menu.GameMaster>();
@@ -105,12 +107,12 @@ namespace Character
         {
             if (OnActivate != null) { OnActivate(Camera.main.ScreenToWorldPoint(Input.mousePosition)); }
             if (H.HeldItem !=null) {
-                Item.Gun G = H.HeldItem.GetComponent<Item.Gun>();
-                if (G != null) { G.Fire(GetComponent<Rigidbody2D>().velocity); }
+                Item.MeleeGun MG = H.HeldItem.GetComponent<Item.MeleeGun>();
+                if (MG != null) { MG.Fire(); }
                 else
                 {
-                    Item.MeleeGun MG = H.HeldItem.GetComponent<Item.MeleeGun>();
-                    if (MG != null) { MG.Fire(); }
+                    Item.Gun G = H.HeldItem.GetComponent<Item.Gun>();
+                    if (G != null) { G.Fire(GetComponent<Rigidbody2D>().velocity); }
                 }
             } // I dont like this, I want it the other way around!
         }

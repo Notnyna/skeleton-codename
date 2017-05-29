@@ -21,7 +21,7 @@ namespace General
             if (fx) {
                 if (fxcount > 0) { fxcount -= Time.deltaTime; } else
                 {
-                    FX.DoFX(90,transform.position,90,10,fxd,1);
+                    FX.DoFX(new Vector2(0,1),transform.position,90,10,fxd,1);
                     fxcount = fxtime;
                 }
             }

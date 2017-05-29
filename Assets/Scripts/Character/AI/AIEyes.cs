@@ -52,6 +52,9 @@ namespace Character.AI
             if (!AIB.hostile) { AIB.hostile = true; }
             AIB.SwitchTargets(null,false);
             AIB = null;
+
+            Interact.DoDialog D = GetComponent<Interact.DoDialog>();
+            if (D != null) { D.enabled = true; }
         }
 
         public void HalfPower()

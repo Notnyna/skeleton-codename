@@ -27,8 +27,12 @@ namespace Menu
         private void CameraT_TargetSwitched(Transform T)
         {
             if (Target == T) { return; }
+            
+            if (Target != null) {
+                Character.Inventory Inv = Target.GetComponentInChildren<Character.Inventory>();
+                if (Inv != null) { Inv.OnChange -= InventoryUI_OnChange; } else { return; }
+            }
             created = false;
-            if (Target != null) { Target.GetComponentInChildren<Character.Inventory>().OnChange -= InventoryUI_OnChange; }
             Target = T;
             OnEnable(); //Recreate inventory
         }
@@ -44,7 +48,7 @@ namespace Menu
                 AddInventory(H.GetInventory());
                 created = true;
 
-                Target.GetComponentInChildren<Character.Inventory>().OnChange += InventoryUI_OnChange; //Might be bad
+                Target.GetComponentInChildren<Character.Inventory>().OnChange += InventoryUI_OnChange; //Might be bad check for it too
                 MakeSelected(H.HoldIndex());
             }
             //Debug.Log("Created succesful?");

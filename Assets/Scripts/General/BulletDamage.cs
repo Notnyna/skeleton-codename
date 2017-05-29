@@ -21,6 +21,7 @@ namespace General
         ListAnimation LS;
         SpawnFX FX;
         SpriteRenderer SR;
+        Vector2 direction; // for now should not change during travel
 
         private void Start()
         {
@@ -31,9 +32,14 @@ namespace General
                 primeTime = LS.currentAniTime();
                 //Debug.Log(primeTime);
             }
+
+            bool f = false;
+            if (transform.lossyScale.x > 0) { f = true; }
+            direction = Menu.UsefulStuff.FromRotationToVector(transform.rotation.eulerAngles.z, f);
+
             if (FX != null)  
             {
-                FX.DoFX(transform.rotation.eulerAngles.z,transform.position,30,10,new int[] { 0 },3);
+                FX.DoFX(direction,transform.position,30,10,new int[] { 0 },3);
             }
             SR=GetComponent<SpriteRenderer>();
             SR.sortingOrder=Random.Range(-5,6);
@@ -64,17 +70,19 @@ namespace General
             //}
         }
 
+        public int accuracy = 10;
         private void DoDamage(Transform cg, Vector2 point)
         {
             Character.Health h;
             if (cg.CompareTag("Player") && primeTime>0) { return; }
 
+            if (Random.Range(0, accuracy) == 0) { return; }
+
             h = cg.GetComponent<Character.Health>();
             bool pierce = true;
             if (h != null) {
-                float f = -1;
-                if (transform.lossyScale.x < 0) { f = 1; }
-                pierce =h.DealDamage(Dmg, transform.position, transform.rotation.z,punch*f);
+
+                pierce =h.DealDamage(Dmg, transform.position, direction,punch);
             }
 
             /*if (punch != 0) {
@@ -97,7 +105,7 @@ namespace General
                 return;
             }
             Apierce--;
-            if (FX != null) { FX.DoFX(transform.rotation.eulerAngles.z, transform.position, 10, 3, new int[] { 3 }, 1); }
+            if (FX != null) { FX.DoFX(-direction, transform.position, 10, 3, new int[] { 3 }, 1); }
             //Debug.Log("Doing damage!");
         }
 
@@ -111,7 +119,7 @@ namespace General
             }
             else { primeTime = 0.2f; }
             destroy = true;
-            if (FX != null) { FX.DoFX(transform.rotation.eulerAngles.z, transform.position, 10, 3, new int[] { 3 }, 1); }
+            if (FX != null) { FX.DoFX(direction, transform.position, 10, 3, new int[] { 3 }, 1); }
         }
 
         private float fxcount;
@@ -134,7 +142,7 @@ namespace General
                 //    
                 //    FXspawn = FXspawn / (FXspawn - 1);
                 //}
-                if (Random.Range(0, 3) == 0) { Miss(); }
+                //if (Random.Range(0, 3) == 0) { Miss(); }
                 lifetime -= Time.deltaTime;
             }
             else { if (!destroy) { Evaporate(); } }
@@ -143,17 +151,17 @@ namespace General
             {
                 fxcount += Time.deltaTime;
                 if (fxcount>FXspawn) {
-                    FX.DoFX(transform.rotation.eulerAngles.z, transform.position, 5, 1, new int[] { 1, 2 }, 1);
+                    FX.DoFX(direction, transform.position, 5, 1, new int[] { 1, 2 }, 1);
                     fxcount = 0;
                 }
             }
         }
 
-        void Miss()
-        {
-            if (gameObject.layer == 2) { gameObject.layer = 0; }
-            else { gameObject.layer = 2; } 
-        }
+        //void Miss()
+       // {
+        //    if (gameObject.layer == 2) { gameObject.layer = 0; }
+       //     else { gameObject.layer = 2; } 
+       // }
 
     }
 }

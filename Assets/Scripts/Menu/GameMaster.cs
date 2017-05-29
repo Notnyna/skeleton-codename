@@ -13,12 +13,14 @@ namespace Menu
         public List<Character.Player> Players = new List<Character.Player>();
         int currentPlayer=0;
         private Scenario.CameraControl CameraT;
+        public Texture2D cursor;
 
         private void Awake()
         {
             CameraT = Camera.main.GetComponent<Scenario.CameraControl>();
             //Players= new List<Character.Player>();
             //Debug.Log("Found " + Players.Count + " players, just telling.");
+            if (cursor != null) { Cursor.SetCursor(cursor,Vector2.zero,CursorMode.Auto); }
         }
 
         public Character.Player GetPlayer()
@@ -53,10 +55,23 @@ namespace Menu
             Players[currentPlayer].enabled = true;
         }
 
-        public void DirectCamera()
+        public void DirectCamera(float time, Transform T)
         {
-            //To do
-
+            count0 = time;
+            CameraT.SwitchTarget(T);
+            drama = true;
+            GetComponent<MenuManager>().NoMenu();
+            
+        }
+        bool drama;
+        float count0 = 0;
+        private void Update()
+        {
+            if (drama)
+            {
+                if (count0 > 0) { count0 -= Time.deltaTime; }
+                else { SwitchPlayer(currentPlayer); drama = false; }
+            }       
         }
 
     }

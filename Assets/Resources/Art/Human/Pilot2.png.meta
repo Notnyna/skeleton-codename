@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 9bfa82ca5000fd44e8ab7aa3527373fb
-timeCreated: 1495051416
+timeCreated: 1496048373
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -8,6 +8,7 @@ TextureImporter:
     21300002: Pilot2_1
     21300004: Pilot2_2
     21300006: Pilot2_3
+    21300008: Pilot2_4
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -127,6 +128,19 @@ TextureImporter:
         x: 68
         y: 4
         width: 21
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Pilot2_4
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 4
+        width: 16
         height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}

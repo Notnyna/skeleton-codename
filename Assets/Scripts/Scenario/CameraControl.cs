@@ -12,10 +12,17 @@ namespace Scenario
         public bool mousemove;
         public float cameraspeed = 0.1f;
         public float focusspeed = 1f;
-        public Vector2 Offset = new Vector2(0,0);
+        public Vector3 Offset = new Vector3(0,0,-40);
 
         public bool focused;
-        Vector2 MovePoint;
+        Vector3 MovePoint;
+        //float zdist;
+
+        private void Awake()
+        {
+            //zdist = transform.position.z;
+            MovePoint = Offset;
+        }
 
         private void FocusCamera(bool focus)
         {
@@ -44,29 +51,30 @@ namespace Scenario
             if (TargetSwitched!=null) { TargetSwitched(t); }
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (Target != null)
             {
-                if (!focused & Mathf.Abs((Target.position.x - transform.position.x)) < 0.1f)
+                if (!focused & Mathf.Abs((Target.position.x - transform.position.x)) < 1)
                 {
                     FocusCamera(true);
                 }
 
-                MovePoint = new Vector2(Target.transform.position.x, Target.transform.position.y)+Offset; // Target.transform.position.y);
+                MovePoint = Target.transform.position+Offset; //new Vector2(Target.transform.position.x, Target.transform.position.y)
 
                 MovePoint.x = Mathf.Lerp(transform.position.x, MovePoint.x, cameraspeed);
                 MovePoint.y = Mathf.Lerp(transform.position.y, MovePoint.y, cameraspeed);
+                MovePoint.z = Mathf.Lerp(transform.position.z, MovePoint.z, cameraspeed);
             }
 
-            if (mousemove)
+            if (mousemove) //Not working
             {
-                Vector2 Mpoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                MovePoint += new Vector2(Mpoint.x - transform.position.x, Mpoint.y - transform.position.y);
+                //Vector2 Mpoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                //MovePoint += new Vector2(Mpoint.x - transform.position.x, Mpoint.y - transform.position.y);
                 //C.orthographicSize = CameraSize + Vector2.Distance(Target.transform.position, transform.position) / 10f;
             }
 
-            transform.position = new Vector3(MovePoint.x, MovePoint.y,transform.position.z);
+            transform.position = MovePoint;
         } //EndUpdate
     }
 }

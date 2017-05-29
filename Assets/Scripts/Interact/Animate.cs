@@ -24,12 +24,14 @@ namespace Interact
             if (repeatani) {
                 if (LS.AniIndex == endani | who==transform) {
                     LS.PlayAnimation(startani,true);
+                    count = autoani;
                     foreach (Transform c in transform)
                     {
                         c.gameObject.SetActive(false);
                     }
                 } else {
                     LS.PlayAnimation(endani, true);
+                    count = autoani;
                     foreach (Transform c in transform)
                     {
                         c.gameObject.SetActive(true);

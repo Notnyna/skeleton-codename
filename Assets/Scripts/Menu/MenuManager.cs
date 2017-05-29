@@ -22,6 +22,7 @@ namespace Menu
         public bool disableControl;
         public string openinv = "i";
 
+
         private void Start()
         {
             DontDestroyOnLoad(this.gameObject);
@@ -34,6 +35,7 @@ namespace Menu
             }
             */
             NoMenu();
+            ChangeMenu(0);
         }
 
         public void NoMenu() { //Might have to redo, this not only looks bad, it works bad
@@ -46,6 +48,7 @@ namespace Menu
             //Menus[currmenu].gameObject.SetActive(false);
            // currmenu = 0;
         }
+
         /// <summary>
         /// 0 - Main menu (exit - pause)
         /// 1 - Storymodemenu (exit - pause)

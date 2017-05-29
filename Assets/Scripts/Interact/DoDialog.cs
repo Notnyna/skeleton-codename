@@ -12,13 +12,15 @@ namespace Interact
     {
         Menu.StoryModeUI SM;
         public string[] Dialog;
+        public bool onetime;
+        public Menu.MenuManager MM;
 
-        private void Awake()
+        private void Start()
         {
             Interactible I = GetComponent<Interactible>();
             if (I == null) { Debug.Log("Nothing to interact with! Can be ignored"); }
             else { I.OnInteract += I_OnInteract; }
-            SM = FindObjectOfType<Menu.StoryModeUI>();
+            SM = MM.GetComponentInChildren<Menu.StoryModeUI>(true); //Cannot find it if its in DONOTDESTROY?
             if (SM == null) { Debug.Log("No story mode window found :("); } //Best to find it in static class, having an actual global time manager would be best.
         }
 
@@ -26,9 +28,9 @@ namespace Interact
         {
             Character.Player P = who.GetComponent<Character.Player>();
             if (P == null) { return; }  //Only the player can do dialogue.
-            Menu.MenuManager MM = FindObjectOfType<Menu.MenuManager>();
             MM.ChangeMenu(1); //Hardcoding is not bad
-            SM.WriteDialog(Dialog); 
+            SM.WriteDialog(Dialog);
+            if (onetime) { Destroy(this); }
         }
 
         private void OnDestroy()

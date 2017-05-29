@@ -8,9 +8,12 @@ namespace Item
         public int damage=1;
         public bool knockbackowner = true;
         MeleeGun MG;
+        General.SpawnFX FX;
+
         private void Start()
         {
             MG = GetComponentInParent<MeleeGun>();
+            FX = GetComponent<General.SpawnFX>();
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
@@ -31,9 +34,13 @@ namespace Item
             h = collision.GetComponent<Character.Health>();
             if (h != null)
             {
-                float f = -1;
-                if (transform.lossyScale.x < 0) { f = 1; }
-                h.DealDamage(damage, collision.transform.position, f, punch*f);
+                //Direction should always be away from the weapon
+                bool f = false;
+                if (transform.lossyScale.x > 0) { f = true; } 
+                Vector2 dirup = Menu.UsefulStuff.FromRotationToVector(transform.rotation.eulerAngles.z, f); //only for up vector?
+
+                Vector2 direction = new Vector2(transform.position.x- collision.transform.position.x,dirup.y*5);
+                h.DealDamage(damage, collision.transform.position, -direction, punch);
 
                 if (knockbackowner)
                 {
@@ -42,10 +49,11 @@ namespace Item
                         Rigidbody2D pRB = MG.CH.GetComponent<Rigidbody2D>();
                         if (pRB != null)
                         {
-                            pRB.AddForce(new Vector2((punch * -f) / 2, 0), ForceMode2D.Impulse);
+                            pRB.AddForce(new Vector2((punch * -1) / 2, 0), ForceMode2D.Impulse);
                         }
                     }
                 }
+                if (FX != null) { FX.DoFX(direction,transform.position,50,5,new int[] {0,1},2); }
             }
         }
     }

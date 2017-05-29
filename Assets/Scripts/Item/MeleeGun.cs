@@ -18,17 +18,23 @@ namespace Item
     public class MeleeGun : MonoBehaviour
     {
         General.MoveAnimation MV;
+        General.Extender EX;
         //General.ListAnimation LS;
         //Rigidbody2D RB;
         public Character.Humus CH;
         public bool active;
         List<Collider2D> Dzones; 
-        int cattack=2; //Start counting from 2 (equip is not attack ani)
+        int cattack=0;
         bool sendtoH; //For changing Humus
+        //public bool knockbackowner = true;
+        Gun G;
 
         private void Start()
         {
+            G= GetComponent<Gun>();
             MV = GetComponent<General.MoveAnimation>();
+            EX = GetComponentInChildren<General.Extender>();
+            if (MV == null) { Debug.Log("No mv for meleegun "+gameObject.name); }
             //LS = GetComponent<General.ListAnimation>();
             //RB = GetComponent<Rigidbody2D>();
             Dzones = new List<Collider2D>();
@@ -44,14 +50,16 @@ namespace Item
                 }
                 
             }
-            if (Dzones.Count == 0) { Debug.Log("No dangerzones?!"); Dzones = null; }
+            if (Dzones.Count == 0) {Dzones = null; Debug.Log("No DZ for " + gameObject.name); }
             if (!active) { DisableAttacks(); }
             //GetComponentInChildren<Collider2D>();
         }
 
         private void DisableAttacks(bool enable = false)
         {
+            if (EX != null) { EX.ExtendPercent(0); }
             if (Dzones == null) { return; }
+            //Debug.Log("disabling " + (cattack - 2));
             for (int i = 0; i < Dzones.Count; i++)
             {
                 Dzones[i].enabled = enable;
@@ -61,43 +69,45 @@ namespace Item
 
         private void EnableAttack()
         {
+            if (EX != null) { EX.ExtendPercent(100); }
             if (Dzones == null) { return; }
             //if (active) { Dzones[0].enabled = false; }
-            if (Dzones.Count > cattack-2)
+            if (Dzones.Count > cattack)
             {
-                Dzones[cattack - 2].enabled = true; 
+                Dzones[cattack].enabled = true;
+                //Debug.Log("enabling "+(cattack-2));
             }
             else {
                 Dzones[0].enabled = true;
             }
         }
 
-        public void Fire() 
+        public void Fire()
         {
             if (!active) { return; }
-            if (count > 0) { return; }
-            if (MV.PlayAnimation(cattack)) {
+            if (count0 > 0) { return; }
+            
+            if (MV != null )
+            {
+                MV.PlayAnimation(cattack + 2);
                 EnableAttack();
-                count = MV.currentAniTime()+0.1f;
-            } else {
-                cattack = 2;
-                EnableAttack();
-                MV.PlayAnimation(cattack);
-                count = MV.currentAniTime()+0.1f;
-                //Fire();
-                //return;
             }
-            if (cattack == 4) {
-                Gun G = GetComponent<Gun>();
-                if (G != null) {
-                    G.enabled = true;
-                    G.Fire(); //Test
-                    G.enabled= false;
-                    }
-                }
+            else if (EX!=null) { count1 = (EX.cooldown+0.02f) * EX.maxext; count0 = count1 *2; EnableAttack(); }
 
+            if (cattack == 2) {
+                if (G != null) {
+                    //G.enabled = true;
+                    G.Fire(); //Test
+                    //G.enabled= false;
+                }
+            }
+            //if (count < 0.08f) { count = 2f; }
             cattack++;
-            if (CH != null) { sendtoH = true; }
+            if (cattack > 2) { cattack = 0; }
+            
+            if (CH != null && CH.HeldItem==transform) { sendtoH = true; }
+            if (MV != null) { count0 += MV.currentAniTime() + 0.2f; }
+            //Debug.Log(cattack +"  "+ count0);
         }
 
         void OnEnable()
@@ -116,7 +126,7 @@ namespace Item
 
         private void OnDisable()
         {
-            DisableAttacks();
+            //DisableAttacks();
             active = false;
         }
 
@@ -125,19 +135,28 @@ namespace Item
             OnEnable();
         }
 
-        float count;
+        float count0;
+        float count1;
         private void Update()
         {
             if (active)
             {
-                if (count > 0)
+                if (count0 > 0)
                 {
-                    count -= Time.deltaTime;
+                    count0 -= Time.deltaTime;
                 }
                 else {
-                    CH.addItemPos = new Vector2();
+                    //CH.addItemPos = new Vector2(); 
                     sendtoH = false;
-                    DisableAttacks();
+                    DisableAttacks(); 
+                }
+                if (EX != null)//Sure there is a better way but heck, im tired
+                {
+                    if (count0 > 0 && count1 > 0)
+                    {
+                        count1 -= Time.deltaTime;
+                    }
+                    else { DisableAttacks(); }
                 }
             }
         }
@@ -147,6 +166,7 @@ namespace Item
             if (sendtoH) {
                 //Vector2 Pt = CH.GetComponent<Rigidbody2D>().position;
                 if (CH == null) { return; }
+                if (MV == null) { return; }
                 Vector2 mv = MV.GetcurrentAni();
                 if (transform.lossyScale.x < 0) { mv = new Vector2(-mv.x,mv.y); }
                 //Vector2 M = Vector2.Lerp(Vector2.zero,mv, Time.deltaTime/count); Menu.UsefulStuff.FromRotationToVector(transform.rotation.z,false)
@@ -160,12 +180,11 @@ namespace Item
             if (MV == null) { return; }
             //Character.Player P = CH.GetComponent<Character.Player>();
             //Character.Humus H = P.GetComponent<Character.Humus>();
-            if (CH == null) { return; }
             if (CH.HeldItem == transform) //Only player can do animations for now
             {
                 MV.PlayAnimation(1);
                 //P.allowaiming = false;
-                count = MV.currentAniTime();
+                count0 = MV.currentAniTime();
             }
         }
     }

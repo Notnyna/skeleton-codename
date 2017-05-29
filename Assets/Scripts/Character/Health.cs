@@ -61,6 +61,7 @@ namespace Character
             RealHP = 0;
             foreach (Health hp in HPS)
             {
+                //Debug.Log("This is global, reporting " + hp.name);
                 //maxHp += hp.HPmult * 100;
                 if (hp != this)
                 {
@@ -110,7 +111,10 @@ namespace Character
                     ChangeHP(who.HPp);
                 }
             }
-            else { RawDamage(1); } //Leave for later (make global hpp matters)
+            else {
+                if (who.HPp != 100) { RawDamage(1); }
+                
+            } //Leave for later (make global hpp matters)
             
             //else { if (HpChanged != null) { HpChanged(this); } } //Might as well inform anyone that you've been hit
            // if (who.HPp < 50 | who.BLEED.Count>=who.maxbleed) {
@@ -138,7 +142,7 @@ namespace Character
         /// <param name="dmg">Damage</param>
         /// <param name="location">Where FX to spawn</param>
         /// <param name="direction">Where FX to go</param>
-        public bool DealDamage(int dmg, Vector2 location, float direction, float punch=0)
+        public bool DealDamage(int dmg, Vector2 location, Vector2 direction, float punch=0)
         {
             //Really needs a cleanup.
             bool pierce = false;
@@ -151,27 +155,27 @@ namespace Character
                 {
                     pierce = true;
                 }
-                else { dmg = 1; }
-                if (FX != null && Random.Range(0, 1) == 0) { FX.DoFX(direction + 180, location, 70, 3, new int[] { 3, 4 }, Mathf.FloorToInt(1 * fxmult)); }
+                else { dmg = 0; }
+                if (FX != null && Random.Range(0, 1) == 0) { FX.DoFX(direction, location, 50, 3, new int[] { 3, 4 }, Mathf.FloorToInt(1 * fxmult)); }
             }
             else if (dmg < 30) //Major hit, might start bleeding. Hard to kill.
             {
                 if (HPp < 40)
                 {
-                    if (Random.Range(0, 4) == 0)
+                    if (Random.Range(0, 5) == 0)
                     {
                         dmg = dmg / 2; pierce = true; Bleed(location);
                     }
-                    else { dmg = 5; }
+                    else { dmg = dmg / 5; }
                 }
                 else if (Random.Range(0, 4) == 0) // 1 in 3 chance
-                    {
-                        pierce = true;
-                        //dmg = dmg * 2;
-                        Bleed(location);
-                    } 
-                
-                if (FX != null) { FX.DoFX(direction+180, location, 70, 3, new int[] { 0, 1, 2, 3, 4 }, Mathf.FloorToInt(1 * fxmult)); }
+                {
+                    pierce = true;
+                    Bleed(location);
+                }
+                else { dmg = dmg / 3; }
+
+                if (FX != null) { FX.DoFX(direction, location, 30, 3, new int[] { 0, 1, 2, 3}, Mathf.FloorToInt(2 * fxmult)); }
             }
             else if (dmg < 50) //Mortal hit, will start bleeding to max. Wont die unless critical is hit.
             {
@@ -198,7 +202,7 @@ namespace Character
                     dmg = ndmg;
                 }
                 Bleed(location);
-                if (FX != null) { FX.DoFX(direction + 180, location, 30, 5, new int[] { 0, 1, 2 }, Mathf.FloorToInt(2 * fxmult)); }
+                if (FX != null) { FX.DoFX(direction, location, 70, 5, new int[] { 0, 1, 2 }, Mathf.FloorToInt(3 * fxmult)); }
             }
             else // Brutal deadly hit, will bleed twice. Twice damage if all bleeding
             {
@@ -206,7 +210,7 @@ namespace Character
                 Bleed(location);
                 Bleed(location);
                 if (BLEED.Count == maxbleed) { dmg += dmg; }
-                if (FX != null) { FX.DoFX(direction + 180, location, 50, 15, new int[] { 0, 1, 2 }, Mathf.FloorToInt(4 * fxmult)); }
+                if (FX != null) { FX.DoFX(direction, location, 50, 15, new int[] { 0, 1, 2 }, Mathf.FloorToInt(5 * fxmult)); }
             }
 
             //Deal damage depending not on percent!
@@ -218,11 +222,11 @@ namespace Character
             {
                 //float f = 1;
                 //if (transform.lossyScale.x < 0) { f = -1; }
-                if (RB != null) { RB.AddForceAtPosition(Menu.UsefulStuff.FromRotationToVector(direction, false)*punch, location, ForceMode2D.Impulse); }
-                if (pRB != null) { pRB.AddForceAtPosition(Menu.UsefulStuff.FromRotationToVector(direction, false) * punch, location, ForceMode2D.Impulse); }
+                if (RB != null) { RB.AddForceAtPosition(direction.normalized*punch, location, ForceMode2D.Impulse); }
+                if (pRB != null) { pRB.AddForceAtPosition(direction.normalized * punch, location, ForceMode2D.Impulse); }
             }
 
-            if (BLEED.Count >= maxbleed) { deathflag = true; }
+            //if (BLEED.Count >= maxbleed) { deathflag = true; }
 
 
             //if (HpChanged != null) { HpChanged(this); }
@@ -232,7 +236,8 @@ namespace Character
         private void CalculatePercent()
         {
             HPp= (int)(((float)CurrentHP / (float)RealHP)*100f);
-            if (HPp > 10) { deathflag = false; } //Should manage this only here, too lazy now
+            if (HPp > 10 | BLEED.Count < maxbleed) { deathflag = false; } else { deathflag = true; }
+            //Debug.Log("Bleeding at "+BLEED.Count +  deathflag.ToString());
             //Debug.Log("HP is " + CurrentHP + " %" + HPp);
             if (HpChanged != null) { HpChanged(this); }
         }
@@ -243,7 +248,7 @@ namespace Character
             {
                 CurrentHP = (int)(((float)RealHP / 100f) * (float)p);
                 CalculatePercent();
-                if (HPp < 10) { deathflag = true; }
+                
             }
         }
 
@@ -284,16 +289,18 @@ namespace Character
         void ExtremeGoreDeathFX()
         {
             //Debug.Log("Death called? it's for " + gameObject.name + "  additional info " + HPp  );
+            if (Global) { return;}
             if (FX != null)
             {
-                FX.DoFX(90, transform.position, 90, FX.debrispeed/3, new int[] { 0, 1, 2, 3, 4, 5, 6 }, Mathf.FloorToInt(20 * fxmult));
+                FX.DoFX(new Vector2(0,-1), transform.position, 90, FX.debrispeed/3, new int[] { 0, 1, 2, 3, 4, 5, 6 }, Mathf.FloorToInt(20 * fxmult));
             }
             if (OnDeath != null) { OnDeath(this); }
             if (diesnever) { deathflag = false; ChangeHP(10); return; }
             if (diestwice) { diestwice = false; deathflag = false; ChangeHP(50);  return; }
             {
+                gameObject.layer = 9;
                 General.TimedDestroy td = gameObject.AddComponent<General.TimedDestroy>();
-                td.timer = 5f;
+                td.timer = 3f;
                 td.fxd = new int[] { 4, 5 };
                 if (FX != null) { td.fx = true; }
                 Destroy(this);
@@ -333,11 +340,11 @@ namespace Character
                 incpercent -= BLEED.Count; // deal damage if bleeding profusely
             }
 
-            if (HPp == 100 && incpercent>0) { incpercent = 0; }
+            if (HPp == 100 && incpercent>0) { incpercent = 0;  }
             CurrentHP += (int)(((float)RealHP / 100f) * incpercent);
 
             CalculatePercent();
-            if (HPp < 10) { deathflag=true; }
+            //if (HPp < 10) { deathflag=true; }
             //if (HpChanged != null) { HpChanged(this); }
         }
 
@@ -364,7 +371,7 @@ namespace Character
             if (FX == null) { return; }
             foreach (Vector2 p in BLEED)
             {
-                FX.DoFX(90,new Vector2(transform.position.x+p.x,transform.position.y+p.y),30,5,new int[] { 5,6 },1); //Maybe just one random?
+                FX.DoFX(new Vector2(0,1),new Vector2(transform.position.x+p.x,transform.position.y+p.y),30,5,new int[] { 5,6 },1); //Maybe just one random?
             }
         }
     }

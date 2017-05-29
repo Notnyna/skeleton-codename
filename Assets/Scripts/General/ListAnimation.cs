@@ -12,7 +12,7 @@ namespace General
     /// 1 Walk
     /// 2 Run
     /// 3 Action (pick up item etc)
-    /// 4 Attack (really? maybe replace with jump)
+    /// 4 Attack (really? maybe replace with jump) ITS DEATH, DEATH 0
     /// 5 Death
     /// </summary>
     public class ListAnimation : MonoBehaviour
