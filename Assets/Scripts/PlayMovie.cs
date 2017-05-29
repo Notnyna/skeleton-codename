@@ -10,15 +10,24 @@ public class PlayMovie : MonoBehaviour {
     public GameObject aud;
     bool canswitch;
     public KeyCode skip;
+    public VideoClip rev;
+    bool reverse;
     // Use this for initialization
     void Start () {
         canswitch = false;
+        reverse = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
         wait = waitfor(w);
         StartCoroutine(wait);
+        if (Time.time > 5 && reverse)
+        {
+            GetComponent<VideoPlayer>().clip = rev;
+            GetComponent<VideoPlayer>().Play();
+            reverse = false;
+        }
         if (Input.GetKeyDown(skip))
             canswitch = true;
         if(canswitch)
@@ -27,9 +36,9 @@ public class PlayMovie : MonoBehaviour {
 
     IEnumerator waitfor(float len)
     {
-        if (Time.time > 5)
+        if (Time.time > 10)
             aud.SetActive(false);
-        yield return new WaitForSeconds(len);
+        yield return new WaitForSeconds(2*len);
         canswitch = true;
     }
 }
