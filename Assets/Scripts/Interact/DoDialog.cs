@@ -14,6 +14,7 @@ namespace Interact
         public string[] Dialog;
         public bool onetime;
         public Menu.MenuManager MM;
+        public bool ignoreafter=true;
 
         private void Start()
         {
@@ -30,6 +31,7 @@ namespace Interact
             if (P == null) { return; }  //Only the player can do dialogue.
             MM.ChangeMenu(1); //Hardcoding is not bad
             SM.WriteDialog(Dialog);
+            if (ignoreafter) { gameObject.layer = 8; }
             if (onetime) { Destroy(this); }
         }
 

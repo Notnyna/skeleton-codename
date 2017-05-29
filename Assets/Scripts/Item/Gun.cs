@@ -32,6 +32,8 @@ namespace Item
         General.ListAnimation LS;
         General.MoveAnimation MV;
 
+        public bool bignorevel;
+
         private void Start()
         {
             MV = GetComponent<General.MoveAnimation>();
@@ -63,7 +65,7 @@ namespace Item
                 add = pRB.velocity * brb.mass/2;
                 if (knockbackowner) { pRB.AddForce(-Boff * fireforce, ForceMode2D.Impulse); }
             }
-
+            if (bignorevel) { add = Vector2.zero; }
             brb.AddForce( //Add impulse to bullet! Note its only half velocity
                 (Boff * fireforce) + add
                 , ForceMode2D.Impulse);

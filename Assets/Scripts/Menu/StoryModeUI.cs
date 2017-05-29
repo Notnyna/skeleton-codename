@@ -86,7 +86,7 @@ namespace Menu
         {
             D = (string[])d.Clone();
             Di = 0;
-
+            DisablePlayer();
         }
 
         private void WriteText(string t)

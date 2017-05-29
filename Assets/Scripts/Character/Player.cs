@@ -68,11 +68,12 @@ namespace Character
 
         private void Death(Health who)
         {
-            H.DoAnimation(5,false,true); // Death ani
-
+            H.DoAnimation(4,false,true); // Death ani
+            gameObject.layer = 8;
             available = false;
             H.DropAll();
             Menu.GameMaster GM = FindObjectOfType<Menu.GameMaster>();
+
             if (enabled) { GM.SwitchPlayer(); }
 
             if (enabled) { Debug.Log("Game over!!"); enabled = false; }

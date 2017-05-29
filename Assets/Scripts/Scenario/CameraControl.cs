@@ -21,7 +21,8 @@ namespace Scenario
         private void Awake()
         {
             //zdist = transform.position.z;
-            MovePoint = Offset;
+            //MovePoint = Offset;
+            //if (Target != null) { transform.position = Target.position; }
         }
 
         private void FocusCamera(bool focus)
@@ -48,7 +49,7 @@ namespace Scenario
         {
             Target = t;
             FocusCamera(false);
-            if (TargetSwitched!=null) { TargetSwitched(t); }
+            //if (TargetSwitched!=null) { TargetSwitched(t); }
         }
 
         private void FixedUpdate()

@@ -19,6 +19,8 @@ namespace General
         public bool EndisPrefab = true;
         public int minext=0;
 
+        public bool doConstantly = false;
+
         private void Start()
         {
             if (EndisPrefab && extensionEnd != null)
@@ -98,9 +100,21 @@ namespace General
 
         private void Update()
         {
-            if (count > 0) { count -= Time.deltaTime; } else { Choose(); }
-        }
+            if (count > 0) { count -= Time.deltaTime; } else {
+                Choose();
+            }
+            if (doConstantly) {
+                if (waiting == 0) {
+                    if (retr)
+                    {
+                        ExtendPercent(100); retr = false;
+                    }
+                    else { ExtendPercent(0); retr = true; }
 
+                }
+            }
+        }
+        private bool retr;
         //bool destroy = false;
         private void OnDestroy()
         {

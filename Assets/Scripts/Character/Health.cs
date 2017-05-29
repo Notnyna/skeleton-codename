@@ -146,7 +146,7 @@ namespace Character
         {
             //Really needs a cleanup.
             bool pierce = false;
-            dmg -= armor;
+            dmg -= Random.Range(armor/2,armor);
             if (Global) { Debug.Log("Dealing damage to global?! Should not happen! " + gameObject.name ); return false; }
 
             if (dmg < 10) // Minor hit, no bleeding, reflect FX (occasional), HP does not fall below 60%. (regenerates full if not bleeding). 
@@ -175,7 +175,7 @@ namespace Character
                 }
                 else { dmg = dmg / 3; }
 
-                if (FX != null) { FX.DoFX(direction, location, 30, 3, new int[] { 0, 1, 2, 3}, Mathf.FloorToInt(2 * fxmult)); }
+                if (FX != null) { FX.DoFX(direction, location, 30, 3, new int[] { 0, 1, 2, 3}, Mathf.FloorToInt(1 * fxmult)); }
             }
             else if (dmg < 50) //Mortal hit, will start bleeding to max. Wont die unless critical is hit.
             {
@@ -202,7 +202,7 @@ namespace Character
                     dmg = ndmg;
                 }
                 Bleed(location);
-                if (FX != null) { FX.DoFX(direction, location, 70, 5, new int[] { 0, 1, 2 }, Mathf.FloorToInt(3 * fxmult)); }
+                if (FX != null) { FX.DoFX(direction, location, 70, 5, new int[] { 0, 1, 2 }, Mathf.FloorToInt(2 * fxmult)); }
             }
             else // Brutal deadly hit, will bleed twice. Twice damage if all bleeding
             {
@@ -210,7 +210,7 @@ namespace Character
                 Bleed(location);
                 Bleed(location);
                 if (BLEED.Count == maxbleed) { dmg += dmg; }
-                if (FX != null) { FX.DoFX(direction, location, 50, 15, new int[] { 0, 1, 2 }, Mathf.FloorToInt(5 * fxmult)); }
+                if (FX != null) { FX.DoFX(direction, location, 50, 15, new int[] { 0, 1, 2 }, Mathf.FloorToInt(3 * fxmult)); }
             }
 
             //Deal damage depending not on percent!
@@ -292,7 +292,7 @@ namespace Character
             if (Global) { return;}
             if (FX != null)
             {
-                FX.DoFX(new Vector2(0,-1), transform.position, 90, FX.debrispeed/3, new int[] { 0, 1, 2, 3, 4, 5, 6 }, Mathf.FloorToInt(20 * fxmult));
+                FX.DoFX(new Vector2(0,-1), transform.position, 90, FX.debrispeed/3, new int[] { 0, 1, 2, 3, 4, 5, 6 }, Mathf.FloorToInt(10 * fxmult));
             }
             if (OnDeath != null) { OnDeath(this); }
             if (diesnever) { deathflag = false; ChangeHP(10); return; }

@@ -20,38 +20,45 @@ namespace Menu
         {
             //Slots = new Item.ItemSlot[1];
             CameraT = Camera.main.GetComponent<Scenario.CameraControl>();
-            if (CameraT == null) { Debug.Log("AAA, no camera!"); } //Worthless little snippets
+            if (CameraT == null) { Debug.Log("AAA, no camera!"); } 
             CameraT.TargetSwitched += CameraT_TargetSwitched;
         }
 
-        private void CameraT_TargetSwitched(Transform T)
+        private void CameraT_TargetSwitched(Transform T) // so convoluted a cleanup is very required!
         {
-            if (Target == T) { return; }
-            
+            //if (Target == T) { return; }
+            Debug.Log("new camera target!");
             if (Target != null) {
                 Character.Inventory Inv = Target.GetComponentInChildren<Character.Inventory>();
-                if (Inv != null) { Inv.OnChange -= InventoryUI_OnChange; } else { return; }
+                if (Inv != null) { Inv.OnChange -= InventoryUI_OnChange; }
             }
             created = false;
             Target = T;
+            
             OnEnable(); //Recreate inventory
         }
 
         private void OnEnable()
         {
-            if (Target == null) { Target = CameraT.Target; if (Target == null) { return; } }
+            if (CameraT == null) { return; }
+            if (Target == null) { Target = CameraT.Target; }
+            if (Target == null) { return; }
+            //WaitForEndOfFrame w = new WaitForEndOfFrame();
+            Debug.Log("Called? " + Target.name);
             if (!created)
             {
                 Character.Humus H = Target.GetComponent<Character.Humus>();
                 if (H == null) { return; } //Target not Human?
+                if (H.GetInventorySpace()== 0) { return; }
                 CreateSlots(H.GetInventorySpace());
                 AddInventory(H.GetInventory());
                 created = true;
-
                 Target.GetComponentInChildren<Character.Inventory>().OnChange += InventoryUI_OnChange; //Might be bad check for it too
                 MakeSelected(H.HoldIndex());
+
+                
             }
-            //Debug.Log("Created succesful?");
+
         }
 
         private void InventoryUI_OnChange(Transform item,int index, bool removed)

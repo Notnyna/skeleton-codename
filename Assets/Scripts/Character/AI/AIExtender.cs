@@ -13,17 +13,21 @@ namespace Character.AI
 
         public void ConditionCheck()
         {
-            if (AIB != null && AIB.hostile) {
+            if (AIB != null && AIB.hostile)
+            {
                 bool target = AIB.NoTarget();
                 if (!target)
                 {
                     float d = Mathf.Abs(AIB.CalculateTarget());
-                    if ( d< extendDist) {
+                    if (d < extendDist)
+                    {
                         if (jumpex && d < 4) { EX.ExtendPercent(100); }
-                        else EX.ExtendPercent(attackex); }
+                        else EX.ExtendPercent(attackex);
+                    }
                     else { EX.ExtendPercent(0); }
                 }
             }
+            //else if (AIB != null) { ExtendRandom(); }
         }
 
         public void Eject()

@@ -55,6 +55,7 @@ namespace Character.AI
 
         private void MoveForward()
         {
+            if (AIB == null) { return; }
             float d = 1;
             if (transform.lossyScale.x > 0) { d = -1; }
             mm = ((1 / (float)dlegs) * LG.Count - half)*d;
@@ -90,6 +91,7 @@ namespace Character.AI
 
         public bool Execute()
         {
+            if (goforward) { return false; }
             if (AIB != null && AIB.NoTarget()) { movebreak = true;  MoveRandom(0.1f); }
             return false;
         }
