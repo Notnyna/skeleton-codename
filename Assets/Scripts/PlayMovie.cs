@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class PlayMovie : MonoBehaviour {
     public float w;
     private IEnumerator wait;
+    public GameObject aud;
     bool canswitch;
     public KeyCode skip;
     // Use this for initialization
@@ -26,6 +27,8 @@ public class PlayMovie : MonoBehaviour {
 
     IEnumerator waitfor(float len)
     {
+        if (Time.time > 5)
+            aud.SetActive(false);
         yield return new WaitForSeconds(len);
         canswitch = true;
     }
